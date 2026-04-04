@@ -15,15 +15,13 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             color: white;
             text-align: center;
-            animation: colorChange 10s infinite alternate;
             overflow: hidden;
-            transition: background-color 0.1s;
+            transition: background-color 1s ease;
+            background-color: #e67e22; /* Start Orange */
         }
 
-        @keyframes colorChange {
-            0% { background-color: #ff4b4b; }
-            100% { background-color: #4b7bff; }
-        }
+        .bg-blue { background-color: #2980b9; }
+        .bg-orange { background-color: #e67e22; }
 
         .site-title {
             font-size: 3rem;
@@ -51,7 +49,7 @@
             font-size: 1.1rem;
             max-width: 600px;
             line-height: 1.5;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             padding: 15px;
             border-radius: 10px;
             position: relative;
@@ -71,7 +69,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s;
             z-index: 10;
         }
 
@@ -86,31 +83,32 @@
             font-weight: bold;
         }
 
-        /* Explosion Particle Style */
+        /* Shrapnel / Metal Parts Style */
         .particle {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background: yellow;
-            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            background: #333; /* Dark Grey Metal */
+            border: 1px solid #111;
             pointer-events: none;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* Shake effect when close to blowing up */
         .shake {
             animation: shake 0.1s infinite;
         }
 
         @keyframes shake {
-            0% { transform: translate(2px, 1px) rotate(0deg); }
-            50% { transform: translate(-1px, -2px) rotate(-1deg); }
-            100% { transform: translate(1px, -1px) rotate(1deg); }
+            0% { transform: translate(2px, 1px); }
+            50% { transform: translate(-1px, -2px); }
+            100% { transform: translate(1px, -1px); }
         }
 
-        .hidden { display: none !important; }
+        .hidden { visibility: hidden; }
 
         .flash {
             background-color: white !important;
+            transition: background-color 0.05s !important;
         }
     </style>
 </head>
@@ -122,10 +120,10 @@
 
     <span class="username">Tyler / TylerGamerYT</span>
 
-    <p id="main-text">
+    <p>
         Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
         I made this just for fun and to test how to make one and stuff, etc. 
-        You could say lol, anyways, bye I guess.
+        You could say "lol," anyways, bye I guess.
     </p>
 
     <div id="bomb">
@@ -137,12 +135,12 @@
         const bomb = document.getElementById('bomb');
         const body = document.body;
         let timeLeft = 30; 
+        let isOrange = true;
 
         function updateTimer() {
             let displaySeconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
             timerDisplay.innerHTML = `00:${displaySeconds}`;
 
-            // Start shaking when 5 seconds are left
             if (timeLeft <= 5 && timeLeft > 0) {
                 bomb.classList.add('shake');
             }
@@ -159,51 +157,62 @@
             bomb.classList.add('hidden');
             body.classList.add('flash');
 
-            // Create 50 explosion particles
-            for (let i = 0; i < 50; i++) {
-                createParticle();
+            // Switch background colors
+            isOrange = !isOrange;
+
+            // Create 60 debris particles
+            for (let i = 0; i < 60; i++) {
+                createDebris();
             }
 
             setTimeout(() => {
                 body.classList.remove('flash');
+                // Apply the new color after flash
+                body.className = isOrange ? 'bg-orange' : 'bg-blue';
+                
                 setTimeout(() => {
                     bomb.classList.remove('hidden');
                     timeLeft = 30;
                 }, 1000);
-            }, 200);
+            }, 150);
         }
 
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            body.appendChild(particle);
+        function createDebris() {
+            const part = document.createElement('div');
+            part.classList.add('particle');
+            body.appendChild(part);
 
-            // Set random colors for fire/smoke
-            const colors = ['#ff4b4b', '#ffeb3b', '#ffa500', '#ffffff'];
-            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            // Make particles look like different sized metal chunks
+            const size = Math.random() * 15 + 5;
+            part.style.width = size + 'px';
+            part.style.height = size + 'px';
+            part.style.borderRadius = Math.random() > 0.5 ? '2px' : '50%'; // Mix of squares and circles
 
-            // Position particle at the bomb's location
             const rect = bomb.getBoundingClientRect();
-            particle.style.left = (rect.left + rect.width / 2) + 'px';
-            particle.style.top = (rect.top + rect.height / 2) + 'px';
+            part.style.left = (rect.left + rect.width / 2) + 'px';
+            part.style.top = (rect.top + rect.height / 2) + 'px';
 
-            // Random direction
             const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 10 + 5;
+            const velocity = Math.random() * 15 + 10;
             const vx = Math.cos(angle) * velocity;
             const vy = Math.sin(angle) * velocity;
+            let rotation = 0;
+            const rotSpeed = (Math.random() - 0.5) * 20;
 
             let opac = 1;
             function move() {
-                particle.style.left = (parseFloat(particle.style.left) + vx) + 'px';
-                particle.style.top = (parseFloat(particle.style.top) + vy) + 'px';
-                opac -= 0.02;
-                particle.style.opacity = opac;
+                part.style.left = (parseFloat(part.style.left) + vx) + 'px';
+                part.style.top = (parseFloat(part.style.top) + vy) + 'px';
+                rotation += rotSpeed;
+                part.style.transform = `rotate(${rotation}deg)`;
+                
+                opac -= 0.015;
+                part.style.opacity = opac;
 
                 if (opac > 0) {
                     requestAnimationFrame(move);
                 } else {
-                    particle.remove();
+                    part.remove();
                 }
             }
             move();
