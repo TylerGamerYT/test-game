@@ -7,8 +7,9 @@
     <style>
         :root {
             --accent: #f1c40f;
-            --bg: #2980b9;
+            --bg: #1a1a1a;
             --danger: #d63031;
+            --card-orange: #e67e22;
         }
 
         body {
@@ -19,36 +20,66 @@
             align-items: center;
             justify-content: flex-start;
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: white;
             text-align: center;
             overflow-x: hidden;
             transition: background-color 1s ease, color 0.5s ease;
-            background-color: var(--bg);
+            background-color: #222;
         }
 
-        /* --- THEMES --- */
+        /* --- THEMES (THE LAB) --- */
         .theme-matrix { --bg: #000; --accent: #0f0; color: #0f0 !important; font-family: 'Courier New', monospace; }
         .theme-cyber { --bg: #2d0036; --accent: #00fff2; color: #00fff2 !important; }
         .theme-gameboy { --bg: #8bac0f; --accent: #306230; color: #306230 !important; }
-        .alert-mode { background-color: #1a1a1a !important; }
+        .alert-active { background-color: #0f0f0f !important; }
 
         #site-title {
             font-size: 3.5rem;
             font-weight: 900;
             margin-top: 20px;
-            margin-bottom: 10px;
-            text-shadow: 3px 3px 15px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
             cursor: pointer;
             user-select: none;
+            transition: 0.3s;
+        }
+        #site-title:hover { transform: scale(1.05); color: var(--accent); }
+
+        /* --- CONTROLS --- */
+        #top-right-ui {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
         }
 
+        .ui-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        .ui-btn:hover { background: var(--accent); color: black; transform: scale(1.1); }
+
         /* --- PFP & DVD --- */
-        #pfp-container {
+        #pfp-wrapper {
             position: relative;
-            width: 150px;
-            height: 150px;
-            margin-bottom: 15px;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 10px;
             z-index: 100;
         }
 
@@ -56,10 +87,10 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 5px solid white;
+            border: 6px solid white;
             cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .dvd-mode {
@@ -67,403 +98,440 @@
             width: 110px !important;
             height: 110px !important;
             z-index: 9999;
-            border-radius: 15% !important;
-            border-width: 10px !important;
-            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+            border-radius: 20% !important;
+            border-width: 8px !important;
+            box-shadow: 0 0 40px rgba(255,255,255,0.4);
         }
 
-        .username {
-            font-size: 2rem;
+        .user-tag {
+            font-size: 2.2rem;
             font-weight: 800;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: block;
-            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        #stats-bar {
-            margin-bottom: 25px;
+        #stats-panel {
+            margin-bottom: 30px;
             font-size: 0.9rem;
             font-weight: bold;
-            background: rgba(0,0,0,0.3);
-            padding: 8px 20px;
-            border-radius: 25px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 25px;
+            border-radius: 50px;
             border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* --- BIO SECTION --- */
-        .bio-container {
-            max-width: 750px;
-            margin-bottom: 25px;
-        }
-
-        .bio-p {
-            font-size: 1.15rem;
-            line-height: 1.7;
-            background: rgba(0,0,0,0.35);
-            padding: 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            border-left: 5px solid var(--accent);
-        }
-
-        /* --- ACHIEVEMENTS GALLERY --- */
-        #ach-gallery {
             display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 30px;
-            transition: opacity 0.5s ease;
+            gap: 20px;
         }
 
-        .ach-card {
-            background: rgba(0,0,0,0.45);
-            padding: 20px;
-            border-radius: 15px;
-            width: 155px;
-            border: 2px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s;
-        }
-
-        .ach-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .ach-card i { font-size: 2.2rem; display: block; margin-bottom: 8px; }
-        .ach-card span { font-weight: 900; font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- BOMB GAME UI --- */
-        #bomb-wrap {
+        /* --- BOMB UI --- */
+        #bomb-container {
             display: none;
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            margin-top: 20px;
-            animation: slideUp 0.6s ease-out;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
         }
 
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        #bomb {
-            width: 340px;
-            background: #e74c3c;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            border-left: 18px solid #c0392b;
-            position: relative;
+        #alert-banner {
+            background: rgba(0,0,0,0.8);
+            border-left: 5px solid var(--accent);
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #ff4b4b;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
 
-        #timer {
-            background: #000;
+        #bomb-case {
+            width: 100%;
+            background: #d63031;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            border-left: 20px solid #b71c1c;
+            border-bottom: 10px solid #b71c1c;
+        }
+
+        #digital-timer {
+            background: #050505;
             color: #ff0000;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 3rem;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 3px solid #333;
-            box-shadow: inset 0 0 10px rgba(255,0,0,0.5);
+            font-size: 4rem;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 4px solid #222;
+            box-shadow: inset 0 0 20px rgba(255,0,0,0.3);
+            text-shadow: 0 0 10px rgba(255,0,0,0.7);
         }
 
-        .phase-box {
-            background: rgba(0,0,0,0.6);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
+        .game-step {
+            background: rgba(0,0,0,0.7);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .hidden { display: none !important; }
 
-        input {
-            width: 85%;
+        input[type="text"] {
+            width: 90%;
             background: #111;
             border: 2px solid #444;
             color: #0f0;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
-            font-size: 1.4rem;
-            border-radius: 6px;
+            font-size: 1.8rem;
+            border-radius: 8px;
             outline: none;
+            font-family: monospace;
         }
 
-        input:focus { border-color: #0f0; }
+        input[type="range"] {
+            width: 100%;
+            margin: 20px 0;
+            cursor: pointer;
+        }
 
-        .wire-container { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
-        .wire { width: 22px; height: 50px; cursor: pointer; border-radius: 5px; transition: transform 0.1s; }
-        .wire:active { transform: scale(0.9); }
-        .wire.cut { height: 15px; opacity: 0.15; background: #000 !important; cursor: default; }
+        .wire-set { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+        .wire-strand { width: 25px; height: 60px; cursor: pointer; border-radius: 6px; transition: 0.1s; }
+        .wire-strand:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .wire-strand.cut { height: 18px; opacity: 0.1; background: #000 !important; cursor: default; transform: none; }
 
-        #stabilize-bar { height: 18px; background: #333; width: 100%; border-radius: 10px; margin-top: 15px; overflow: hidden; border: 1px solid #555; }
-        #stabilize-fill { height: 100%; background: #00ff00; width: 0%; transition: width 0.1s; }
+        #gyro-track { height: 20px; background: #222; width: 100%; border-radius: 20px; margin-top: 15px; border: 2px solid #444; overflow: hidden; }
+        #gyro-fill { height: 100%; background: #00ff00; width: 0%; transition: width 0.1s; box-shadow: 0 0 15px #00ff00; }
 
-        #final-switch {
+        #final-button {
             background: #ffeb3b;
             color: #000;
             border: none;
-            padding: 18px;
+            padding: 22px;
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             cursor: pointer;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 12px;
             text-transform: uppercase;
-            box-shadow: 0 4px 0 #fbc02d;
-            animation: pulse 0.5s infinite;
+            box-shadow: 0 6px 0 #fbc02d;
+            transition: 0.1s;
         }
+        #final-button:active { transform: translateY(4px); box-shadow: 0 2px 0 #fbc02d; }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
-        /* --- AWARD POPUP --- */
-        #award-display {
+        /* --- ACHIEVEMENT / CLOSE CALL CARD --- */
+        #award-card {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #f1c40f;
+            background: var(--card-orange);
             color: #000;
-            padding: 50px;
+            padding: 40px;
             border-radius: 35px;
-            z-index: 2000;
-            border: 10px solid #fff;
-            min-width: 350px;
-            box-shadow: 0 0 120px rgba(0,0,0,0.9);
-            animation: awardPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 5000;
+            width: 450px;
+            border: 8px solid #fff;
+            box-shadow: 0 0 150px rgba(0,0,0,1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes awardPop { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+        @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.3); opacity: 0; } }
 
-        .award-title { font-size: 2.5rem; font-weight: 900; margin: 15px 0; line-height: 1.1; }
-        .award-sub { font-weight: 800; text-transform: uppercase; opacity: 0.7; letter-spacing: 1.5px; font-size: 0.9rem; }
+        .award-skull { font-size: 8rem; line-height: 1; margin-bottom: 10px; }
+        .award-header { font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem; margin-bottom: 5px; }
+        .award-title { font-size: 3.5rem; font-weight: 900; margin: 10px 0; line-height: 1; }
+        .award-desc { font-weight: 800; text-transform: uppercase; opacity: 0.9; margin-bottom: 20px; font-size: 1rem; }
+        .award-footer { border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; font-style: italic; font-weight: 600; font-size: 1.3rem; }
 
-        /* --- EXTRAS --- */
-        #dev-menu {
+        /* --- DEV LAB PANEL --- */
+        #lab-panel {
             display: none;
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 15px;
+            background: #111;
+            padding: 25px;
+            border-radius: 20px;
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             z-index: 5000;
-            border: 2px solid gold;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 3px solid gold;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            width: 200px;
         }
 
-        #dev-menu button { margin: 5px; padding: 8px 12px; cursor: pointer; border-radius: 5px; border: none; font-weight: bold; }
-        #crewmate { position: fixed; bottom: 20px; left: -160px; font-size: 65px; transition: 3s linear; pointer-events: none; z-index: 9999; }
-        #bus { position: fixed; top: 15%; left: -250px; font-size: 60px; transition: 5s linear; pointer-events: none; z-index: 9999; }
+        #lab-panel h3 { color: gold; margin-top: 0; }
+        #lab-panel button { 
+            width: 100%; margin: 8px 0; padding: 12px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; 
+            transition: 0.2s;
+        }
+        #lab-panel button:hover { opacity: 0.8; transform: scale(1.02); }
 
-        .danger-text { color: #ff4b4b !important; font-weight: 900; font-size: 2rem; text-transform: uppercase; animation: shake 0.2s infinite; }
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(3px); } 50% { transform: translateX(-3px); } 100% { transform: translateX(0); } }
+        /* --- SPRITES --- */
+        #sprite-sus { position: fixed; bottom: 30px; left: -180px; font-size: 75px; transition: 3s linear; pointer-events: none; z-index: 10000; }
+        #sprite-bus { position: fixed; top: 20%; left: -250px; font-size: 70px; transition: 5s linear; pointer-events: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
-    <div id="site-title" onclick="titleClick()">Tyler's Test Site</div>
+    <div id="top-right-ui">
+        <button class="ui-btn" onclick="toggleAudio()" id="music-btn">📻</button>
+        <button class="ui-btn" onclick="openLab()">🧪</button>
+    </div>
+
+    <div id="site-title" onclick="labCounter()">Tyler's Test Site</div>
     
-    <div id="pfp-container">
+    <div id="pfp-wrapper">
         <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp" id="main-pfp" onclick="toggleDVD()">
     </div>
     
-    <span class="username">Tyler / TylerGamerYT</span>
+    <span class="user-tag">Tyler / TylerGamerYT</span>
 
-    <div id="stats-bar">
-        🏆 BEST DISARM: <span id="high-score">0s</span> | 🔥 CLOSEST CALL: <span id="closest-call">0s</span>
+    <div id="stats-panel">
+        <span>🏆 BEST DISARM: <span id="val-best">0s</span></span>
+        <span>🔥 CLOSEST CALL: <span id="val-close">0s</span></span>
     </div>
 
-    <div class="bio-container" id="bio-wrap">
-        <p class="bio-p" id="status-text">
+    <div class="bio-container" id="intro-bio">
+        <p class="bio-p">
             Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
             I made this just for fun and to test how to make one and stuff, etc. 
             You could say "lol," anyways, bye I guess.
         </p>
     </div>
 
-    <div id="ach-gallery">
-        <div class="ach-card"><i>🏆</i><span>SURVIVOR</span></div>
-        <div class="ach-card" style="border-color:#e67e22"><i>🔥</i><span>ELITE (1-10s)</span></div>
-        <div class="ach-card" style="border-color:#c0392b"><i>💥</i><span>KABOOM</span></div>
-    </div>
-
-    <div id="bomb-wrap">
-        <div id="bomb">
-            <div id="timer">01:00</div>
+    <div id="bomb-container">
+        <div id="alert-banner">🚨 DISARM THE BOMB, USER!</div>
+        
+        <div id="bomb-case">
+            <div id="digital-timer">01:00</div>
             
-            <div id="phase1" class="phase-box">
-                <label>PHASE 1: ENTER CODE 1234</label><br><br>
-                <input type="text" id="code-input" maxlength="4" placeholder="****">
+            <div id="step-1" class="game-step">
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 1: BYPASS KEYPAD (CODE 1234)</label>
+                <input type="text" id="input-code" maxlength="4" placeholder="----">
             </div>
 
-            <div id="phase2" class="phase-box hidden">
-                <label>PHASE 2: CALIBRATE TO 50%</label><br><br>
-                <input type="range" id="signal-slider" min="0" max="100" value="0">
-                <div id="signal-val" style="font-weight:bold; margin-top:10px;">0%</div>
+            <div id="step-2" class="game-step hidden">
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 2: FREQUENCY CALIBRATION (50%)</label>
+                <input type="range" id="slider-freq" min="0" max="100" value="0">
+                <div id="freq-readout" style="font-weight:900; color:var(--accent); font-size:1.5rem;">0%</div>
             </div>
 
-            <div id="phase3" class="phase-box hidden">
-                <label>PHASE 3: CUT ALL 6 WIRES</label>
-                <div class="wire-container" id="wire-box"></div>
+            <div id="step-3" class="game-step hidden">
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 3: SEVER CONNECTORS</label>
+                <div class="wire-set" id="wire-grid"></div>
             </div>
 
-            <div id="phase4" class="phase-box hidden">
-                <label>PHASE 4: STABILIZE CORE (STAY STILL)</label>
-                <div id="stabilize-bar"><div id="stabilize-fill"></div></div>
+            <div id="step-4" class="game-step hidden">
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 4: GYRO STABILIZATION (FREEZE!)</label>
+                <div id="gyro-track"><div id="gyro-fill"></div></div>
             </div>
 
-            <div id="phase5" class="phase-box hidden">
-                <button id="final-switch" onclick="winGame()">FINAL OVERRIDE</button>
+            <div id="step-5" class="game-step hidden">
+                <button id="final-button" onclick="triggerWin()">FINAL OVERRIDE</button>
             </div>
         </div>
     </div>
 
-    <div id="award-display">
-        <div id="award-emoji" style="font-size:6rem">🏆</div>
-        <div class="award-sub">Achievement Unlocked</div>
-        <div class="award-title" id="award-name">THE SURVIVOR</div>
-        <div class="award-sub" id="award-desc">MISSION ACCOMPLISHED</div>
-        <div id="award-time" style="margin-top:20px; font-weight:900; font-style:italic; font-size:1.2rem; color: rgba(0,0,0,0.6);"></div>
+    <div id="award-card">
+        <div class="award-skull">💀</div>
+        <div class="award-header">Achievement Unlocked</div>
+        <div class="award-title" id="award-main-text">CLOSE CALL</div>
+        <div class="award-desc" id="award-sub-text">DISARMED WITH 5s LEFT!</div>
+        <div class="award-footer">
+            Cutting it a bit close there, don't you think?
+        </div>
     </div>
 
-    <div id="dev-menu">
-        <strong style="color:gold">THE LAB</strong><br><br>
-        <button onclick="setTheme('matrix')" style="background:#0f0; color:#000">Matrix</button>
-        <button onclick="setTheme('cyber')" style="background:#00fff2; color:#000">Cyber</button>
-        <button onclick="setTheme('gameboy')" style="background:#8bac0f; color:#000">Gameboy</button><br>
-        <button onclick="localStorage.clear(); location.reload();" style="background:#ff4b4b; color:#fff; width:94%">Reset All Stats</button>
+    <div id="lab-panel">
+        <h3>THE LAB</h3>
+        <button onclick="applyTheme('matrix')" style="background:#0f0; color:#000">MATRIX</button>
+        <button onclick="applyTheme('cyber')" style="background:#00fff2; color:#000">CYBERPUNK</button>
+        <button onclick="applyTheme('gameboy')" style="background:#8bac0f; color:#000">GAMEBOY</button>
+        <button onclick="clearAllData()" style="background:#ff4b4b; color:#fff; margin-top:20px;">WIPE DATA</button>
+        <button onclick="closeLab()" style="background:#444; color:#fff;">CLOSE</button>
     </div>
 
-    <div id="crewmate">📮</div>
-    <div id="bus">🚌💨</div>
+    <div id="sprite-sus">📮</div>
+    <div id="sprite-bus">🚌💨</div>
 
     <script>
-        let isDVD = false, dx=Math.random()*100, dy=Math.random()*100, dvx=5, dvy=5, titleClicks=0, keys="";
-        let gameActive = false, timeLeft = 60, wiresCut = 0, stabProgress = 0;
+        let isDVD = false, posDX=Math.random()*100, posDY=Math.random()*100, velX=5, velY=5, labHits=0, comboKeys="";
+        let isPlaying = false, timeRemaining = 60, cutCount = 0, balanceVal = 0;
+        let audioOn = false;
 
-        // --- STATS ---
-        function updateStats() {
-            document.getElementById('high-score').innerText = localStorage.getItem('tylerBest') || "0s";
-            document.getElementById('closest-call').innerText = localStorage.getItem('tylerClose') || "0s";
+        // MUSIC LOGIC
+        const soundtrack = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
+        soundtrack.loop = true;
+
+        function toggleAudio() {
+            audioOn = !audioOn;
+            if(audioOn) {
+                soundtrack.play();
+                document.getElementById('music-btn').innerText = "🎵";
+            } else {
+                soundtrack.pause();
+                document.getElementById('music-btn').innerText = "📻";
+            }
         }
-        updateStats();
 
-        // --- LAB & THEMES ---
-        function titleClick() { 
-            titleClicks++; 
-            if(titleClicks >= 5) document.getElementById('dev-menu').style.display='block'; 
+        // STATS
+        function refreshStats() {
+            document.getElementById('val-best').innerText = localStorage.getItem('t_best') || "0s";
+            document.getElementById('val-close').innerText = localStorage.getItem('t_close') || "0s";
         }
-        function setTheme(t) { document.body.className = "theme-"+t; }
+        refreshStats();
 
-        // --- DVD LOGIC ---
+        // LAB ACCESS
+        function labCounter() { 
+            labHits++; 
+            if(labHits >= 5) openLab(); 
+        }
+        function openLab() { document.getElementById('lab-panel').style.display='block'; }
+        function closeLab() { document.getElementById('lab-panel').style.display='none'; }
+        function applyTheme(t) { document.body.className = "theme-"+t; }
+        function clearAllData() { localStorage.clear(); location.reload(); }
+
+        // DVD BOUNCE
         function toggleDVD() { 
             isDVD = !isDVD; 
-            if(isDVD) { document.getElementById('main-pfp').classList.add('dvd-mode'); animDVD(); } 
-            else { location.reload(); } 
+            if(isDVD) { 
+                document.getElementById('main-pfp').classList.add('dvd-mode'); 
+                requestAnimationFrame(moveDVD); 
+            } else { 
+                location.reload(); 
+            } 
         }
-        function animDVD() {
+        function moveDVD() {
             if(!isDVD) return;
-            let p = document.getElementById('main-pfp');
-            dx += dvx; dy += dvy;
-            let winW = window.innerWidth - 110, winH = window.innerHeight - 110;
-            if(dx >= winW || dx <= 0) { dvx *= -1; p.style.borderColor = `hsl(${Math.random()*360},80%,60%)`; }
-            if(dy >= winH || dy <= 0) { dvy *= -1; p.style.borderColor = `hsl(${Math.random()*360},80%,60%)`; }
-            p.style.left = dx+'px'; p.style.top = dy+'px';
-            requestAnimationFrame(animDVD);
+            let el = document.getElementById('main-pfp');
+            posDX += velX; posDY += velY;
+            let maxX = window.innerWidth - 110, maxY = window.innerHeight - 110;
+            if(posDX >= maxX || posDX <= 0) { velX *= -1; el.style.borderColor = `hsl(${Math.random()*360},80%,60%)`; }
+            if(posDY >= maxY || posDY <= 0) { velY *= -1; el.style.borderColor = `hsl(${Math.random()*360},80%,60%)`; }
+            el.style.left = posDX+'px'; el.style.top = posDY+'px';
+            requestAnimationFrame(moveDVD);
         }
 
-        // --- EASTER EGGS ---
+        // SECRETS
         window.addEventListener('keydown', (e) => {
             if(document.activeElement.tagName === 'INPUT') return;
-            keys += e.key.toLowerCase();
-            if(keys.endsWith("sus")) { let c=document.getElementById('crewmate'); c.style.left="125vw"; setTimeout(()=>c.style.left="-160px",3500); keys=""; }
-            if(keys.endsWith("fortnite")) { let b=document.getElementById('bus'); b.style.left="125vw"; setTimeout(()=>b.style.left="-250px",5500); keys=""; }
-            if(keys.endsWith("creeper")) { document.body.style.background="#2ecc71"; alert("Ssssss.... BOOM!"); keys=""; }
-            if(keys.endsWith("roblox")) { alert("OOF!"); keys=""; }
-            if(keys.endsWith("godmode")) { timeLeft=99; winGame(); keys=""; }
-            if(keys.length > 25) keys = keys.slice(-15);
+            comboKeys += e.key.toLowerCase();
+            if(comboKeys.endsWith("sus")) { triggerSprite('sprite-sus', 3500); comboKeys=""; }
+            if(comboKeys.endsWith("fortnite")) { triggerSprite('sprite-bus', 5500); comboKeys=""; }
+            if(comboKeys.endsWith("creeper")) { document.body.style.background="#2ecc71"; alert("Ssssss.... BOOM!"); comboKeys=""; }
+            if(comboKeys.endsWith("roblox")) { alert("OOF!"); comboKeys=""; }
+            if(comboKeys.endsWith("godmode")) { timeRemaining=99; triggerWin(); comboKeys=""; }
+            if(comboKeys.length > 30) comboKeys = comboKeys.slice(-15);
         });
 
-        // --- GAME START ---
+        function triggerSprite(id, dur) {
+            let s = document.getElementById(id);
+            s.style.left = "130vw";
+            setTimeout(() => { s.style.left = "-250px"; }, dur);
+        }
+
+        // BOMB GAME ENGINE
         setTimeout(() => {
-            document.getElementById('bomb-wrap').style.display='flex';
-            document.getElementById('ach-gallery').style.opacity = '0';
-            document.getElementById('status-text').innerText = "🚨 DISARM THE BOMB, TYLER!";
-            document.getElementById('status-text').classList.add('danger-text');
-            document.body.classList.add('alert-mode');
-            gameActive = true;
-            let timerInt = setInterval(() => {
-                if(!gameActive) { clearInterval(timerInt); return; }
-                timeLeft--;
-                document.getElementById('timer').innerText = `00:${timeLeft<10?'0'+timeLeft:timeLeft}`;
-                if(timeLeft <= 10) document.getElementById('timer').style.color = '#fff';
-                if(timeLeft <= 0) { clearInterval(timerInt); explode(); }
+            document.getElementById('bomb-container').style.display='flex';
+            document.getElementById('intro-bio').style.display = 'none';
+            document.body.classList.add('alert-active');
+            isPlaying = true;
+            let ticker = setInterval(() => {
+                if(!isPlaying) { clearInterval(ticker); return; }
+                timeRemaining--;
+                document.getElementById('digital-timer').innerText = `00:${timeRemaining<10?'0'+timeRemaining:timeRemaining}`;
+                
+                if(timeRemaining <= 10) {
+                    document.getElementById('digital-timer').style.animation = "shake 0.1s infinite";
+                    if(audioOn) soundtrack.playbackRate = 1.5;
+                }
+                
+                if(timeRemaining <= 0) { clearInterval(ticker); failGame(); }
             }, 1000);
-        }, 15000);
+        }, 12000);
 
-        // --- PHASES ---
-        document.getElementById('code-input').addEventListener('input', (e) => {
-            if(e.target.value === "1234") { document.getElementById('phase1').classList.add('hidden'); document.getElementById('phase2').classList.remove('hidden'); }
+        // Gameplay Interaction Logic
+        document.getElementById('input-code').addEventListener('input', (e) => {
+            if(e.target.value === "1234") { 
+                document.getElementById('step-1').classList.add('hidden'); 
+                document.getElementById('step-2').classList.remove('hidden'); 
+            }
         });
 
-        document.getElementById('signal-slider').addEventListener('input', (e) => {
-            document.getElementById('signal-val').innerText = e.target.value + "%";
-            if(e.target.value == "50") { document.getElementById('phase2').classList.add('hidden'); document.getElementById('phase3').classList.remove('hidden'); setupWires(); }
+        document.getElementById('slider-freq').addEventListener('input', (e) => {
+            document.getElementById('freq-readout').innerText = e.target.value + "%";
+            if(e.target.value == "50") { 
+                document.getElementById('step-2').classList.add('hidden'); 
+                document.getElementById('step-3').classList.remove('hidden'); 
+                generateWires(); 
+            }
         });
 
-        function setupWires() {
-            const box = document.getElementById('wire-box');
+        function generateWires() {
+            const grid = document.getElementById('wire-grid');
             const colors = ['#e74c3c','#3498db','#f1c40f','#2ecc71','#9b59b6','#e67e22'];
             colors.forEach(c => {
-                let w = document.createElement('div'); w.className = 'wire'; w.style.background = c;
+                let w = document.createElement('div'); w.className = 'wire-strand'; w.style.background = c;
                 w.onclick = function() {
                     if(!this.classList.contains('cut')){
-                        this.classList.add('cut'); wiresCut++;
-                        if(wiresCut===6){ document.getElementById('phase3').classList.add('hidden'); document.getElementById('phase4').classList.remove('hidden'); startStab(); }
+                        this.classList.add('cut'); cutCount++;
+                        if(cutCount===6){ 
+                            document.getElementById('step-3').classList.add('hidden'); 
+                            document.getElementById('step-4').classList.remove('hidden'); 
+                            runGyro(); 
+                        }
                     }
                 };
-                box.appendChild(w);
+                grid.appendChild(w);
             });
         }
 
-        function startStab() {
-            let moving = false; window.onmousemove = () => { moving = true; setTimeout(()=>moving=false,100); };
-            let si = setInterval(() => {
-                if(!gameActive) { clearInterval(si); return; }
-                if(!moving) stabProgress += 4; else stabProgress = 0;
-                document.getElementById('stabilize-fill').style.width = stabProgress + "%";
-                if(stabProgress >= 100) { clearInterval(si); document.getElementById('phase4').classList.add('hidden'); document.getElementById('phase5').classList.remove('hidden'); }
+        function runGyro() {
+            let isMoving = false; 
+            window.onmousemove = () => { isMoving = true; setTimeout(()=>isMoving=false,100); };
+            let gi = setInterval(() => {
+                if(!isPlaying) { clearInterval(gi); return; }
+                if(!isMoving) balanceVal += 3; else balanceVal = 0;
+                document.getElementById('gyro-fill').style.width = balanceVal + "%";
+                if(balanceVal >= 100) { 
+                    clearInterval(gi); 
+                    document.getElementById('step-4').classList.add('hidden'); 
+                    document.getElementById('step-5').classList.remove('hidden'); 
+                }
             }, 100);
         }
 
-        // --- END GAME ---
-        function winGame() {
-            gameActive = false;
-            document.getElementById('bomb-wrap').style.display='none';
-            const award = document.getElementById('award-display');
-            award.style.display = 'block';
+        function triggerWin() {
+            isPlaying = false;
+            document.getElementById('bomb-container').style.display='none';
+            const card = document.getElementById('award-card');
+            card.style.display = 'block';
             
-            let currentBest = parseInt(localStorage.getItem('tylerBest')) || 0;
-            if(timeLeft > currentBest) localStorage.setItem('tylerBest', timeLeft+"s");
+            let lastBest = parseInt(localStorage.getItem('t_best')) || 0;
+            if(timeRemaining > lastBest) localStorage.setItem('t_best', timeRemaining+"s");
 
-            if(timeLeft <= 10 && timeLeft > 0) {
-                localStorage.setItem('tylerClose', timeLeft+"s");
-                document.getElementById('award-name').innerText = `THE ${timeLeft}s ELITE`;
-                document.getElementById('award-desc').innerText = "CUTTING IT CLOSE!";
-                document.getElementById('award-time').innerText = `DISARMED WITH EXACTLY ${timeLeft}s REMAINING!`;
-                award.style.background = "linear-gradient(135deg, #e67e22, #c0392b)";
-                award.style.color = "white";
-                award.style.borderColor = "#ffeb3b";
+            if(timeRemaining <= 10 && timeRemaining > 0) {
+                localStorage.setItem('t_close', timeRemaining+"s");
+                document.getElementById('award-main-text').innerText = "CLOSE CALL";
+                document.getElementById('award-sub-text').innerText = `DISARMED WITH ${timeRemaining}s LEFT!`;
+                card.style.background = "linear-gradient(135deg, #e67e22, #c0392b)";
             } else {
-                document.getElementById('award-name').innerText = "THE SURVIVOR";
-                document.getElementById('award-desc').innerText = "MISSION ACCOMPLISHED";
-                document.getElementById('award-time').innerText = `BOMB DEACTIVATED AT ${timeLeft}s`;
+                document.getElementById('award-main-text').innerText = "SURVIVOR";
+                document.getElementById('award-sub-text').innerText = "MISSION ACCOMPLISHED";
+                document.querySelector('.award-footer').innerText = "You handled that with expertise.";
             }
-            updateStats();
-            setTimeout(() => location.reload(), 7000);
+            refreshStats();
+            setTimeout(() => location.reload(), 8000);
         }
 
-        function explode() { 
+        function failGame() { 
             document.body.style.background = "white";
-            alert("💥 KABOOM! YOU FAILED!"); 
+            alert("💥 KABOOM! MISSION FAILED."); 
             location.reload(); 
         }
     </script>
