@@ -20,6 +20,13 @@
         .bio-container { max-width: 700px; }
         p { font-size: 1.1rem; line-height: 1.6; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-bottom: 15px; }
 
+        /* --- ACHIEVEMENTS GALLERY --- */
+        #achievements-gallery { display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center; transition: 0.5s; }
+        .ach-card { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; width: 140px; border: 1px solid rgba(255,255,255,0.2); }
+        .ach-card i { font-size: 1.5rem; display: block; margin-bottom: 5px; }
+        .ach-card span { font-weight: bold; font-size: 0.8rem; display: block; color: #f1c40f; }
+        .ach-card p { font-size: 0.7rem; background: none; padding: 0; margin: 5px 0 0 0; opacity: 0.8; line-height: 1.2; }
+
         /* --- BOMB UI --- */
         #bomb-wrap { display: none; flex-direction: column; align-items: center; margin-top: 20px; gap: 15px; }
         #bomb { width: 320px; background: #d63031; border-radius: 15px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border-left: 15px solid #b71c1c; }
@@ -66,6 +73,12 @@
         </p>
     </div>
 
+    <div id="achievements-gallery">
+        <div class="ach-card"><i>🏆</i><span>THE SURVIVOR</span><p>Disarm the bomb successfully.</p></div>
+        <div class="ach-card"><i>💀</i><span>CLOSE CALL</span><p>Disarm with 10s or less left.</p></div>
+        <div class="ach-card" style="border-color: #c0392b;"><i>💥</i><span>KABOOM!</span><p>Let the bomb blow up.</p></div>
+    </div>
+
     <div id="bomb-wrap">
         <div id="bomb">
             <div id="timer">01:00</div>
@@ -108,6 +121,7 @@
     <script>
         const statusText = document.getElementById('status-text');
         const bombWrap = document.getElementById('bomb-wrap');
+        const gallery = document.getElementById('achievements-gallery');
         const timerDisplay = document.getElementById('timer');
         const body = document.body;
         const awardBox = document.getElementById('award-display');
@@ -124,6 +138,7 @@
             statusText.innerHTML = "OH NO THERES A BOMB!!! DISARM IT NOW!!";
             statusText.classList.add('danger-text');
             body.classList.add('alert-mode');
+            gallery.classList.add('hidden'); // Hide the awards list during the game
             bombWrap.style.display = 'flex';
             gameActive = true;
             startTimer();
