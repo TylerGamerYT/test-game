@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tyler's Test</title>
+    <meta charset="UTF-8">
+    <title>Tyler's Test Site</title>
     <style>
         body {
             margin: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            font-family: sans-serif;
+            justify-content: flex-start;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
             color: white;
             text-align: center;
             animation: colorChange 10s infinite alternate;
+            overflow-x: hidden;
         }
 
         @keyframes colorChange {
@@ -21,29 +24,131 @@
             100% { background-color: #4b7bff; }
         }
 
-        img {
-            width: 150px;
+        .site-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        img.pfp {
+            width: 140px;
             border-radius: 50%;
-            border: 5px solid white;
+            border: 4px solid white;
+            margin-bottom: 10px;
+        }
+
+        .username {
+            font-size: 1.8rem;
+            font-weight: bold;
             margin-bottom: 20px;
+            display: block;
         }
 
         p {
-            font-size: 1.2rem;
-            max-width: 80%;
+            font-size: 1.1rem;
+            max-width: 600px;
             line-height: 1.5;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        /* --- THE BOMB --- */
+        #bomb {
+            position: relative;
+            width: 120px;
+            height: 150px;
+            background: #d63031;
+            border-radius: 10px;
+            margin: 40px 0;
+            border-left: 10px solid #b71c1c;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The Fuse */
+        #bomb::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            width: 4px;
+            height: 20px;
+            background: #333;
+            left: 50%;
+        }
+
+        /* Digital Display on the Bomb */
+        #timer {
+            background: #222;
+            color: #ff0000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            padding: 5px 10px;
+            border: 2px solid #555;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Explosion Flash */
+        .explode {
+            background-color: white !important;
+            filter: brightness(2);
         }
     </style>
 </head>
 <body>
 
-    <img src="https://github.com/TylerGamerYT.png" alt="TylerGamerYT Profile Picture">
+    <div class="site-title">Tyler's Test Site</div>
+
+    <img src="https://github.com/TylerGamerYT.png" alt="TylerGamerYT Profile Picture" class="pfp">
+
+    <span class="username">Tyler / TylerGamerYT</span>
 
     <p>
         Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
         I made this just for fun and to test how to make one and stuff, etc. 
-        You could say lol, anyways, bye I guess.
+        You could say "lol," anyways, bye I guess.
     </p>
+
+    <div id="bomb">
+        <div id="timer">03:00</div>
+    </div>
+
+    <script>
+        const timerDisplay = document.getElementById('timer');
+        const body = document.body;
+        let timeLeft = 180; 
+
+        function updateTimer() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timerDisplay.innerHTML = `${minutes}:${seconds}`;
+
+            if (timeLeft <= 0) {
+                explodeBomb();
+            } else {
+                timeLeft--;
+            }
+        }
+
+        function explodeBomb() {
+            body.classList.add('explode');
+            timerDisplay.innerHTML = "BOOM!";
+            setTimeout(() => {
+                body.classList.remove('explode');
+                timeLeft = 180; 
+            }, 500);
+        }
+
+        setInterval(updateTimer, 1000);
+    </script>
 
 </body>
 </html>
