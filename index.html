@@ -14,252 +14,195 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         
         .site-title { font-size: 3rem; font-weight: 900; margin-top: 20px; margin-bottom: 30px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-        img.pfp { width: 140px; border-radius: 50%; border: 4px solid white; margin-bottom: 10px; }
-        .username { font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; display: block; }
         
+        /* --- PFP & DVD STUFF --- */
+        #pfp-container { position: relative; width: 140px; height: 140px; margin-bottom: 10px; z-index: 100; transition: 0.3s; }
+        img.pfp { 
+            width: 100%; border-radius: 50%; border: 4px solid white; cursor: pointer; 
+            transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        img.pfp:hover { transform: scale(1.1); }
+        .dvd-mode { position: fixed !important; width: 80px !important; height: 80px !important; z-index: 9999; }
+
+        .username { font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; display: block; }
         .bio-container { max-width: 700px; }
         p { font-size: 1.1rem; line-height: 1.6; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-bottom: 15px; }
 
-        /* --- ACHIEVEMENTS GALLERY --- */
+        /* --- GALLERY --- */
         #achievements-gallery { display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center; transition: 0.5s; }
         .ach-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; width: 150px; border: 2px solid rgba(255,255,255,0.1); }
-        .ach-card i { font-size: 2rem; display: block; margin-bottom: 8px; }
         .ach-card span { font-weight: bold; font-size: 0.8rem; display: block; color: #f1c40f; text-transform: uppercase; }
-        .ach-card p { font-size: 0.7rem; background: none; padding: 0; margin: 8px 0 0 0; opacity: 0.9; line-height: 1.3; }
 
         /* --- BOMB UI --- */
         #bomb-wrap { display: none; flex-direction: column; align-items: center; margin-top: 20px; gap: 15px; }
         #bomb { width: 320px; background: #d63031; border-radius: 15px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border-left: 15px solid #b71c1c; }
-        #timer { background: #111; color: #ff0000; font-family: 'Courier New', monospace; font-size: 2.5rem; padding: 10px; border-radius: 5px; margin-bottom: 15px; box-shadow: inset 0 0 15px #000; }
-        .phase-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        #timer { background: #111; color: #ff0000; font-family: 'Courier New', monospace; font-size: 2.5rem; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .phase-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
         .hidden { display: none !important; }
 
-        input, [type="range"] { width: 80%; background: #222; border: 1px solid #555; color: #0f0; margin-top: 10px; padding: 5px; text-align: center; border-radius: 4px; }
-        .wire-container { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-        .wire { width: 15px; height: 45px; cursor: pointer; border-radius: 4px; transition: 0.2s; }
-        .wire.cut { height: 12px; opacity: 0.2; background: #000 !important; cursor: default; }
-        #final-switch { background: #ffeb3b; color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; animation: blink 0.3s infinite; text-transform: uppercase; }
-        
-        .stabilize-bar { height: 15px; background: #555; width: 100%; border-radius: 5px; margin-top: 10px; position: relative; overflow: hidden; }
-        #stabilize-fill { height: 100%; background: #0f0; width: 0%; transition: width 0.1s; }
+        /* --- EASTER EGGS --- */
+        #crewmate { position: fixed; bottom: 20px; left: -100px; font-size: 50px; transition: 4s linear; z-index: 10000; pointer-events: none; }
         
         /* --- AWARD POPUP --- */
         #award-display { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: #f1c40f; color: #000; padding: 35px; border-radius: 25px;
-            box-shadow: 0 0 100px rgba(0,0,0,0.9); z-index: 2000; border: 6px solid #fff;
-            min-width: 300px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.9); z-index: 2000; border: 6px solid #fff; min-width: 300px;
         }
-        .award-title { font-size: 2.1rem; font-weight: 900; margin: 15px 0; line-height: 1; }
-        .award-icon { font-size: 4.5rem; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); }
-        #award-desc { font-weight: bold; font-size: 1rem; text-transform: uppercase; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 10px; }
-        #final-message { margin-top: 15px; font-style: italic; font-size: 1.1rem; }
-
-        .particle { position: absolute; background: #333; border: 1px solid #111; pointer-events: none; z-index: 1000; }
-        .flash { background-color: white !important; transition: none !important; }
     </style>
 </head>
 <body>
 
     <div class="site-title">Tyler's Test Site</div>
-    <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp">
+    
+    <div id="pfp-container">
+        <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp" id="main-pfp" onclick="toggleDVD()">
+    </div>
+    
     <span class="username">Tyler / TylerGamerYT</span>
 
     <div class="bio-container">
         <p id="status-text">
-            Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
-            I made this just for fun and to test how to make one and stuff, etc. 
-            You could say "lol," anyways, bye I guess.
+            Hello, I am Tyler, and welcome to my test GitHub.io site. 
+            Click my PFP for a surprise, or try typing "sus"...
         </p>
     </div>
 
     <div id="achievements-gallery">
-        <div class="ach-card"><i>🏆</i><span>SURVIVOR</span><p>Disarm with 11s+ remaining.</p></div>
-        <div class="ach-card" style="border-color: #e67e22;"><i>🔥</i><span>ELITE (1-10s)</span><p>Disarm at a specific final second.</p></div>
-        <div class="ach-card" style="border-color: #c0392b;"><i>💥</i><span>KABOOM!</span><p>Let the bomb blow up.</p></div>
+        <div class="ach-card"><i>🏆</i><span>SURVIVOR</span><p>Disarm with 11s+.</p></div>
+        <div class="ach-card" style="border-color: #e67e22;"><i>🔥</i><span>ELITE</span><p>The final 10 seconds.</p></div>
+        <div class="ach-card" style="border-color: #c0392b;"><i>💥</i><span>KABOOM!</span><p>Let it blow up.</p></div>
     </div>
 
     <div id="bomb-wrap">
         <div id="bomb">
             <div id="timer">01:00</div>
-            
             <div id="phase1" class="phase-box">
-                <label>PHASE 1: ENTER CODE 1234</label>
-                <input type="text" id="code-input" maxlength="4" placeholder="****">
+                <label>PHASE 1: CODE 1234</label><br>
+                <input type="text" id="code-input" maxlength="4">
             </div>
-
-            <div id="phase2" class="phase-box hidden">
-                <label>PHASE 2: CALIBRATE SIGNAL (50%)</label>
-                <input type="range" id="signal-slider" min="0" max="100" value="0">
-                <div id="signal-val">0%</div>
             </div>
-
-            <div id="phase3" class="phase-box hidden">
-                <label>PHASE 3: CUT ALL 6 WIRES</label>
-                <div class="wire-container" id="wire-box"></div>
-            </div>
-
-            <div id="phase4" class="phase-box hidden">
-                <label>PHASE 4: STABILIZE CORE (HOLD STILL!)</label>
-                <div class="stabilize-bar"><div id="stabilize-fill"></div></div>
-            </div>
-
-            <div id="phase5" class="phase-box hidden">
-                <button id="final-switch" onclick="winGame()">Final Override</button>
-            </div>
-        </div>
     </div>
 
     <div id="award-display">
         <div class="award-icon" id="award-emoji">🏆</div>
-        <div style="text-transform: uppercase; font-weight: 800; letter-spacing: 1px; font-size: 0.8rem;">Achievement Unlocked</div>
         <div class="award-title" id="award-name">THE SURVIVOR</div>
         <div id="award-desc">MISSION ACCOMPLISHED</div>
         <div id="final-message"></div>
     </div>
 
+    <div id="crewmate">📮</div>
+
     <script>
+        // --- DVD PFP LOGIC ---
+        let isDVD = false;
+        let x = 50, y = 50, xv = 4, yv = 4;
+        const pfp = document.getElementById('main-pfp');
+
+        function toggleDVD() {
+            isDVD = !isDVD;
+            if (isDVD) {
+                pfp.classList.add('dvd-mode');
+                animateDVD();
+            } else {
+                pfp.classList.remove('dvd-mode');
+                pfp.style.left = "auto"; pfp.style.top = "auto";
+                pfp.style.borderColor = "white";
+            }
+        }
+
+        function animateDVD() {
+            if (!isDVD) return;
+            let winW = window.innerWidth - 80;
+            let winH = window.innerHeight - 80;
+
+            x += xv; y += yv;
+
+            if (x >= winW || x <= 0) {
+                xv *= -1;
+                pfp.style.borderColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+            }
+            if (y >= winH || y <= 0) {
+                yv *= -1;
+                pfp.style.borderColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+            }
+
+            pfp.style.left = x + 'px';
+            pfp.style.top = y + 'px';
+            requestAnimationFrame(animateDVD);
+        }
+
+        // --- EASTER EGGS (KEYBOARD) ---
+        let inputString = "";
+        window.addEventListener('keydown', (e) => {
+            inputString += e.key.toLowerCase();
+            if (inputString.includes("sus")) {
+                const cm = document.getElementById('crewmate');
+                cm.style.left = "110vw";
+                setTimeout(() => { cm.style.left = "-100px"; }, 4000);
+                inputString = "";
+            }
+            if (inputString.includes("creeper")) {
+                document.body.style.backgroundColor = "#2ecc71";
+                alert("Ssssss.... BOOM!");
+                inputString = "";
+            }
+            if (inputString.length > 10) inputString = "";
+        });
+
+        // --- EXISTING BOMB LOGIC ---
         const statusText = document.getElementById('status-text');
         const bombWrap = document.getElementById('bomb-wrap');
         const gallery = document.getElementById('achievements-gallery');
-        const timerDisplay = document.getElementById('timer');
-        const body = document.body;
-        const awardBox = document.getElementById('award-display');
-        const awardName = document.getElementById('award-name');
-        const awardEmoji = document.getElementById('award-emoji');
-        const awardDesc = document.getElementById('award-desc');
-        const finalMsg = document.getElementById('final-message');
+        let gameActive = false, timeLeft = 60;
 
-        let gameActive = false, timeLeft = 60, wiresCut = 0, stabProgress = 0;
-
-        setTimeout(startThreat, 15000);
-
-        function startThreat() {
-            statusText.innerHTML = "OH NO THERES A BOMB!!! DISARM IT NOW!!";
-            statusText.classList.add('danger-text');
-            body.classList.add('alert-mode');
-            gallery.classList.add('hidden');
-            bombWrap.style.display = 'flex';
-            gameActive = true;
-            startTimer();
-        }
-
-        // Logic for Keypad, Slider, Wires, and Stabilizer...
-        document.getElementById('code-input').addEventListener('input', (e) => {
-            if(e.target.value === "1234") {
-                document.getElementById('phase1').classList.add('hidden');
-                document.getElementById('phase2').classList.remove('hidden');
+        setTimeout(() => {
+            if(!isDVD) { // Don't start bomb if player is messing with DVD egg
+                statusText.innerHTML = "🚨 EMERGENCY! BOMB DETECTED!";
+                statusText.classList.add('danger-text');
+                gallery.classList.add('hidden');
+                bombWrap.style.display = 'flex';
+                gameActive = true;
+                startTimer();
             }
-        });
-
-        document.getElementById('signal-slider').addEventListener('input', (e) => {
-            document.getElementById('signal-val').innerText = e.target.value + "%";
-            if(e.target.value == "50") {
-                document.getElementById('phase2').classList.add('hidden');
-                document.getElementById('phase3').classList.remove('hidden');
-                createWires();
-            }
-        });
-
-        function createWires() {
-            const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#e67e22'];
-            const box = document.getElementById('wire-box');
-            box.innerHTML = '';
-            colors.forEach(c => {
-                const w = document.createElement('div'); w.className = 'wire'; w.style.backgroundColor = c;
-                w.onclick = function() {
-                    if(!this.classList.contains('cut')) {
-                        this.classList.add('cut'); wiresCut++;
-                        if(wiresCut === 6) {
-                            document.getElementById('phase3').classList.add('hidden');
-                            document.getElementById('phase4').classList.remove('hidden');
-                            startStabilize();
-                        }
-                    }
-                };
-                box.appendChild(w);
-            });
-        }
-
-        function startStabilize() {
-            let isMoving = false;
-            window.onmousemove = () => { isMoving = true; setTimeout(()=>isMoving=false, 100); };
-            const check = setInterval(() => {
-                if(!gameActive) clearInterval(check);
-                if(!isMoving) stabProgress += 4; else stabProgress = 0;
-                document.getElementById('stabilize-fill').style.width = stabProgress + "%";
-                if(stabProgress >= 100) {
-                    clearInterval(check);
-                    document.getElementById('phase4').classList.add('hidden');
-                    document.getElementById('phase5').classList.remove('hidden');
-                }
-            }, 100);
-        }
+        }, 20000);
 
         function startTimer() {
             const countdown = setInterval(() => {
                 if(!gameActive) { clearInterval(countdown); return; }
                 timeLeft--;
-                timerDisplay.innerHTML = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                document.getElementById('timer').innerHTML = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
                 if(timeLeft <= 0) { clearInterval(countdown); explode(); }
             }, 1000);
         }
 
-        function triggerAward(title, emoji, desc, msg, color) {
-            awardName.innerText = title;
-            awardEmoji.innerText = emoji;
-            awardDesc.innerText = desc;
-            finalMsg.innerText = msg;
-            awardBox.style.background = color;
-            awardBox.style.display = 'block';
-        }
-
-        function winGame() { 
-            gameActive = false; 
-            statusText.innerHTML = "BOMB DISARMED. Safe for now, User."; 
-            statusText.classList.remove('danger-text');
-            statusText.style.color = "#2ecc71";
-            bombWrap.classList.add('hidden');
-
-            // NEW DYNAMIC ELITE AWARDS (1-10s)
-            if(timeLeft >= 1 && timeLeft <= 10) {
-                triggerAward(`THE ${timeLeft}s ELITE`, "🔥", `PRECISION DISARM AT ${timeLeft}s!`, "Legendary timing. You actually did it.", "#e67e22");
-            } else {
-                triggerAward("THE SURVIVOR", "🏆", "BOMB STOPPED AT " + timeLeft + "s", "The city is safe... for now.", "#f1c40f");
-            }
-
-            setTimeout(() => location.reload(), 6000); 
-        }
-
         function explode() {
-            gameActive = false; 
-            body.classList.add('flash');
-            bombWrap.classList.add('hidden');
-            for (let i = 0; i < 100; i++) { createDebris(); }
-            triggerAward("YOU LET IT BLOW UP", "💥", "TOTAL ANNIHILATION", "Well, that's one way to end the day. Everything is gone.", "#c0392b");
-            awardBox.style.color = "white";
-            setTimeout(() => { location.reload(); }, 6000);
+            gameActive = false;
+            document.body.style.backgroundColor = "white";
+            alert("BOOM! You let it blow up!");
+            location.reload();
         }
 
-        function createDebris() {
-            const part = document.createElement('div');
-            part.className = 'particle';
-            body.appendChild(part);
-            const size = Math.random() * 20 + 5;
-            part.style.width = size + 'px'; part.style.height = size + 'px';
-            part.style.left = '50%'; part.style.top = '50%';
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 30 + 15;
-            const vx = Math.cos(angle) * velocity;
-            const vy = Math.sin(angle) * velocity;
-            let opac = 1;
-            function move() {
-                part.style.left = (parseFloat(part.style.left) + vx) + 'px';
-                part.style.top = (parseFloat(part.style.top) + vy) + 'px';
-                opac -= 0.02; part.style.opacity = opac;
-                if (opac > 0) requestAnimationFrame(move); else part.remove();
+        document.getElementById('code-input').addEventListener('input', (e) => {
+            if(e.target.value === "1234") {
+                // In a real site, you'd show Phase 2 here. For this demo, let's just win!
+                winGame();
             }
-            move();
+        });
+
+        function winGame() {
+            gameActive = false;
+            const awardBox = document.getElementById('award-display');
+            const name = document.getElementById('award-name');
+            awardBox.style.display = "block";
+            
+            if (timeLeft <= 10) {
+                name.innerText = `THE ${timeLeft}s ELITE`;
+                awardBox.style.background = "orange";
+            } else {
+                name.innerText = "THE SURVIVOR";
+            }
+            setTimeout(() => location.reload(), 5000);
         }
     </script>
 </body>
