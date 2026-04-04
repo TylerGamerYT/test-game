@@ -17,6 +17,7 @@
             text-align: center;
             animation: colorChange 10s infinite alternate;
             overflow-x: hidden;
+            transition: background-color 0.1s;
         }
 
         @keyframes colorChange {
@@ -70,7 +71,6 @@
             justify-content: center;
         }
 
-        /* The Fuse */
         #bomb::before {
             content: '';
             position: absolute;
@@ -81,7 +81,6 @@
             left: 50%;
         }
 
-        /* Digital Display on the Bomb */
         #timer {
             background: #222;
             color: #ff0000;
@@ -93,7 +92,6 @@
             font-weight: bold;
         }
 
-        /* Explosion Flash */
         .explode {
             background-color: white !important;
             filter: brightness(2);
@@ -115,21 +113,19 @@
     </p>
 
     <div id="bomb">
-        <div id="timer">03:00</div>
+        <div id="timer">00:30</div>
     </div>
 
     <script>
         const timerDisplay = document.getElementById('timer');
         const body = document.body;
-        let timeLeft = 180; 
+        let timeLeft = 30; // Set to 30 seconds
 
         function updateTimer() {
-            let minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
+            let seconds = timeLeft;
+            let displaySeconds = seconds < 10 ? '0' + seconds : seconds;
 
-            timerDisplay.innerHTML = `${minutes}:${seconds}`;
+            timerDisplay.innerHTML = `00:${displaySeconds}`;
 
             if (timeLeft <= 0) {
                 explodeBomb();
@@ -143,7 +139,7 @@
             timerDisplay.innerHTML = "BOOM!";
             setTimeout(() => {
                 body.classList.remove('explode');
-                timeLeft = 180; 
+                timeLeft = 30; // Reset back to 30
             }, 500);
         }
 
