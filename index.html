@@ -5,77 +5,39 @@
     <title>Tyler's Test Site</title>
     <style>
         body {
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: white;
-            text-align: center;
-            overflow: hidden;
-            transition: background-color 1s ease;
-            background-color: #2980b9;
+            margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            min-height: 100vh; font-family: 'Segoe UI', Arial, sans-serif; color: white; text-align: center;
+            overflow-x: hidden; transition: background-color 1s ease; background-color: #2980b9;
         }
-
-        .alert-mode { background-color: #444 !important; }
+        .alert-mode { background-color: #222 !important; }
         .danger-text { color: #ff4b4b !important; font-weight: bold; font-size: 1.8rem; text-transform: uppercase; animation: blink 0.5s infinite; }
-        
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
+        
         .site-title { font-size: 3rem; font-weight: 900; margin-top: 20px; margin-bottom: 30px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
         img.pfp { width: 140px; border-radius: 50%; border: 4px solid white; margin-bottom: 10px; }
         .username { font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; display: block; }
         
-        p { font-size: 1.1rem; max-width: 600px; line-height: 1.5; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; transition: all 0.3s; }
+        .bio-container { max-width: 700px; }
+        p { font-size: 1.1rem; line-height: 1.6; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-bottom: 15px; }
 
-        /* --- THE BOMB --- */
-        #bomb-wrap { display: none; flex-direction: column; align-items: center; margin-top: 20px; }
+        /* --- THE BOMB INTERFACE --- */
+        #bomb-wrap { display: none; flex-direction: column; align-items: center; margin-top: 20px; gap: 15px; }
+        #bomb { width: 320px; background: #d63031; border-radius: 15px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border-left: 15px solid #b71c1c; }
+        #timer { background: #111; color: #ff0000; font-family: 'Courier New', monospace; font-size: 2.5rem; padding: 10px; border-radius: 5px; margin-bottom: 15px; box-shadow: inset 0 0 15px #000; }
+        .phase-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .hidden { display: none; }
+
+        input, [type="range"] { width: 80%; background: #222; border: 1px solid #555; color: #0f0; margin-top: 10px; padding: 5px; text-align: center; }
+        .wire-container { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        .wire { width: 15px; height: 45px; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+        .wire.cut { height: 12px; opacity: 0.2; background: #000 !important; cursor: default; }
+        #final-switch { background: #ffeb3b; color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; animation: blink 0.3s infinite; }
         
-        #bomb {
-            position: relative;
-            width: 200px;
-            height: 150px;
-            background: #d63031;
-            border-radius: 10px;
-            border-left: 12px solid #b71c1c;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-        }
-
-        #timer {
-            background: #111;
-            color: #ff0000;
-            font-family: 'Courier New', monospace;
-            font-size: 2.2rem;
-            padding: 5px 20px;
-            border: 3px solid #444;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            box-shadow: inset 0 0 10px #000;
-        }
-
-        .wire-container { display: flex; gap: 12px; margin-top: 10px; }
-        .wire {
-            width: 10px;
-            height: 45px;
-            background: #444;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-            transition: height 0.2s, opacity 0.2s, transform 0.1s;
-        }
-        .wire:hover { transform: scaleY(1.1); }
-        .wire.cut { height: 12px; opacity: 0.2; cursor: default; background: #000 !important; transform: scale(0.9); }
-
-        .particle { position: absolute; background: #222; border: 1px solid #000; pointer-events: none; z-index: 100; }
+        .stabilize-bar { height: 15px; background: #555; width: 100%; border-radius: 5px; margin-top: 10px; position: relative; overflow: hidden; }
+        #stabilize-fill { height: 100%; background: #0f0; width: 0%; transition: width 0.1s; }
+        
+        .particle { position: absolute; background: #333; border: 1px solid #111; pointer-events: none; z-index: 1000; }
         .flash { background-color: white !important; transition: none !important; }
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -84,37 +46,55 @@
     <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp">
     <span class="username">Tyler / TylerGamerYT</span>
 
-    <p id="status-text">
-        Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
-        I made this just for fun and to test how to make one and stuff, etc. 
-        You could say "lol," anyways, bye I guess.
-    </p>
+    <div class="bio-container">
+        <p id="status-text">
+            Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
+            I made this just for fun and to test how to make one and stuff, etc. 
+            You could say "lol," anyways, bye I guess.
+        </p>
+    </div>
 
     <div id="bomb-wrap">
         <div id="bomb">
             <div id="timer">01:00</div>
-            <div class="wire-container" id="wire-box">
-                </div>
+            
+            <div id="phase1" class="phase-box">
+                <label>PHASE 1: ENTER CODE 1234</label>
+                <input type="text" id="code-input" maxlength="4" placeholder="****">
+            </div>
+
+            <div id="phase2" class="phase-box hidden">
+                <label>PHASE 2: CALIBRATE SIGNAL (50%)</label>
+                <input type="range" id="signal-slider" min="0" max="100" value="0">
+                <div id="signal-val">0%</div>
+            </div>
+
+            <div id="phase3" class="phase-box hidden">
+                <label>PHASE 3: CUT ALL 6 WIRES</label>
+                <div class="wire-container" id="wire-box"></div>
+            </div>
+
+            <div id="phase4" class="phase-box hidden">
+                <label>PHASE 4: STABILIZE CORE (HOLD STILL!)</label>
+                <div class="stabilize-bar"><div id="stabilize-fill"></div></div>
+            </div>
+
+            <div id="phase5" class="phase-box hidden">
+                <button id="final-switch" onclick="winGame()">FINAL OVERRIDE</button>
+            </div>
         </div>
-        <p style="background:none; font-size: 1rem; margin-top: 15px;">SNIP ALL 6 WIRES TO SURVIVE!</p>
     </div>
 
     <script>
         const statusText = document.getElementById('status-text');
         const bombWrap = document.getElementById('bomb-wrap');
         const timerDisplay = document.getElementById('timer');
-        const wireBox = document.getElementById('wire-box');
         const body = document.body;
 
-        let gameActive = false;
-        let timeLeft = 60;
-        let wiresCut = 0;
-        const totalWires = 6;
-        const wireColors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#e67e22'];
+        let gameActive = false, timeLeft = 60, wiresCut = 0, stabProgress = 0;
 
-        setTimeout(() => {
-            startThreat();
-        }, 30000);
+        // BOMB SPAWNS 15 SECONDS LATER
+        setTimeout(startThreat, 15000);
 
         function startThreat() {
             statusText.innerHTML = "OH NO THERES A BOMB!!! DISARM IT NOW!!";
@@ -122,86 +102,106 @@
             body.classList.add('alert-mode');
             bombWrap.style.display = 'flex';
             gameActive = true;
-            createWires();
             startTimer();
         }
 
+        // Phase 1: Keypad Logic
+        document.getElementById('code-input').addEventListener('input', (e) => {
+            if(e.target.value === "1234") {
+                document.getElementById('phase1').classList.add('hidden');
+                document.getElementById('phase2').classList.remove('hidden');
+            }
+        });
+
+        // Phase 2: Calibration Logic
+        document.getElementById('signal-slider').addEventListener('input', (e) => {
+            document.getElementById('signal-val').innerText = e.target.value + "%";
+            if(e.target.value == "50") {
+                document.getElementById('phase2').classList.add('hidden');
+                document.getElementById('phase3').classList.remove('hidden');
+                createWires();
+            }
+        });
+
+        // Phase 3: Wire Cutting Logic
         function createWires() {
-            wireBox.innerHTML = '';
-            wiresCut = 0;
-            for(let i=0; i<totalWires; i++) {
-                const w = document.createElement('div');
-                w.className = 'wire';
-                w.style.backgroundColor = wireColors[i];
+            const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#e67e22'];
+            const box = document.getElementById('wire-box');
+            box.innerHTML = '';
+            colors.forEach(c => {
+                const w = document.createElement('div'); w.className = 'wire'; w.style.backgroundColor = c;
                 w.onclick = function() {
                     if(!this.classList.contains('cut')) {
-                        this.classList.add('cut');
-                        wiresCut++;
-                        checkWin();
+                        this.classList.add('cut'); wiresCut++;
+                        if(wiresCut === 6) {
+                            document.getElementById('phase3').classList.add('hidden');
+                            document.getElementById('phase4').classList.remove('hidden');
+                            startStabilize();
+                        }
                     }
                 };
-                wireBox.appendChild(w);
-            }
+                box.appendChild(w);
+            });
+        }
+
+        // Phase 4: Motion Sensor Logic
+        function startStabilize() {
+            let isMoving = false;
+            window.onmousemove = () => { isMoving = true; setTimeout(()=>isMoving=false, 100); };
+            const check = setInterval(() => {
+                if(!gameActive) clearInterval(check);
+                if(!isMoving) stabProgress += 4; else stabProgress = 0;
+                document.getElementById('stabilize-fill').style.width = stabProgress + "%";
+                if(stabProgress >= 100) {
+                    clearInterval(check);
+                    document.getElementById('phase4').classList.add('hidden');
+                    document.getElementById('phase5').classList.remove('hidden');
+                }
+            }, 100);
         }
 
         function startTimer() {
             const countdown = setInterval(() => {
                 if(!gameActive) { clearInterval(countdown); return; }
                 timeLeft--;
-                let displaySecs = timeLeft < 10 ? '0' + timeLeft : timeLeft;
-                timerDisplay.innerHTML = `00:${displaySecs}`;
-                if(timeLeft <= 0) {
-                    clearInterval(countdown);
-                    explode();
-                }
+                timerDisplay.innerHTML = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+                if(timeLeft <= 0) { clearInterval(countdown); explode(); }
             }, 1000);
         }
 
-        function checkWin() {
-            if(wiresCut === totalWires) {
-                gameActive = false;
-                statusText.innerHTML = "BOMB DISARMED. Safe for now, User.";
-                statusText.classList.remove('danger-text');
-                statusText.style.color = "#2ecc71";
-                timerDisplay.style.color = "#2ecc71";
-                setTimeout(() => { location.reload(); }, 5000);
-            }
+        function winGame() { 
+            gameActive = false; 
+            statusText.innerHTML = "BOMB DISARMED. Safe for now, User."; 
+            statusText.classList.remove('danger-text');
+            statusText.style.color = "#2ecc71";
+            bombWrap.classList.add('hidden');
+            setTimeout(() => location.reload(), 5000); 
         }
 
         function explode() {
-            gameActive = false;
+            gameActive = false; 
             body.classList.add('flash');
             bombWrap.classList.add('hidden');
-            for (let i = 0; i < 80; i++) { createDebris(); }
-            setTimeout(() => {
-                body.classList.remove('flash');
-                statusText.innerHTML = "CRITICAL FAILURE. REBOOTING...";
-                setTimeout(() => { location.reload(); }, 3000);
-            }, 150);
+            for (let i = 0; i < 100; i++) { createDebris(); }
+            setTimeout(() => { location.reload(); }, 2500);
         }
 
         function createDebris() {
             const part = document.createElement('div');
             part.className = 'particle';
             body.appendChild(part);
-            const size = Math.random() * 18 + 4;
-            part.style.width = size + 'px';
-            part.style.height = size + 'px';
-            part.style.left = '50%';
-            part.style.top = '60%';
+            const size = Math.random() * 20 + 5;
+            part.style.width = size + 'px'; part.style.height = size + 'px';
+            part.style.left = '50%'; part.style.top = '50%';
             const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 25 + 10;
+            const velocity = Math.random() * 30 + 15;
             const vx = Math.cos(angle) * velocity;
             const vy = Math.sin(angle) * velocity;
-            let rot = 0;
             let opac = 1;
             function move() {
                 part.style.left = (parseFloat(part.style.left) + vx) + 'px';
                 part.style.top = (parseFloat(part.style.top) + vy) + 'px';
-                rot += 10;
-                part.style.transform = `rotate(${rot}deg)`;
-                opac -= 0.015;
-                part.style.opacity = opac;
+                opac -= 0.02; part.style.opacity = opac;
                 if (opac > 0) requestAnimationFrame(move); else part.remove();
             }
             move();
