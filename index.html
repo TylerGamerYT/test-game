@@ -17,209 +17,195 @@
             text-align: center;
             overflow: hidden;
             transition: background-color 1s ease;
-            background-color: #e67e22; /* Start Orange */
+            background-color: #2980b9;
         }
 
-        .bg-blue { background-color: #2980b9; }
-        .bg-orange { background-color: #e67e22; }
+        .alert-mode { background-color: #444 !important; }
+        .danger-text { color: #ff4b4b !important; font-weight: bold; font-size: 1.8rem; text-transform: uppercase; animation: blink 0.5s infinite; }
+        
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        .site-title {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-top: 20px;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
-
-        img.pfp {
-            width: 140px;
-            border-radius: 50%;
-            border: 4px solid white;
-            margin-bottom: 10px;
-        }
-
-        .username {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        p {
-            font-size: 1.1rem;
-            max-width: 600px;
-            line-height: 1.5;
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 10px;
-            position: relative;
-            z-index: 5;
-        }
+        .site-title { font-size: 3rem; font-weight: 900; margin-top: 20px; margin-bottom: 30px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        img.pfp { width: 140px; border-radius: 50%; border: 4px solid white; margin-bottom: 10px; }
+        .username { font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; display: block; }
+        
+        p { font-size: 1.1rem; max-width: 600px; line-height: 1.5; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; transition: all 0.3s; }
 
         /* --- THE BOMB --- */
+        #bomb-wrap { display: none; flex-direction: column; align-items: center; margin-top: 20px; }
+        
         #bomb {
             position: relative;
-            width: 120px;
+            width: 200px;
             height: 150px;
             background: #d63031;
             border-radius: 10px;
-            margin: 40px 0;
-            border-left: 10px solid #b71c1c;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            border-left: 12px solid #b71c1c;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 10;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
         }
 
         #timer {
-            background: #222;
+            background: #111;
             color: #ff0000;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.5rem;
-            padding: 5px 10px;
-            border: 2px solid #555;
+            font-family: 'Courier New', monospace;
+            font-size: 2.2rem;
+            padding: 5px 20px;
+            border: 3px solid #444;
             border-radius: 5px;
-            font-weight: bold;
+            margin-bottom: 10px;
+            box-shadow: inset 0 0 10px #000;
         }
 
-        /* Shrapnel / Metal Parts Style */
-        .particle {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #333; /* Dark Grey Metal */
-            border: 1px solid #111;
-            pointer-events: none;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        .wire-container { display: flex; gap: 12px; margin-top: 10px; }
+        .wire {
+            width: 10px;
+            height: 45px;
+            background: #444;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            transition: height 0.2s, opacity 0.2s, transform 0.1s;
         }
+        .wire:hover { transform: scaleY(1.1); }
+        .wire.cut { height: 12px; opacity: 0.2; cursor: default; background: #000 !important; transform: scale(0.9); }
 
-        .shake {
-            animation: shake 0.1s infinite;
-        }
-
-        @keyframes shake {
-            0% { transform: translate(2px, 1px); }
-            50% { transform: translate(-1px, -2px); }
-            100% { transform: translate(1px, -1px); }
-        }
-
-        .hidden { visibility: hidden; }
-
-        .flash {
-            background-color: white !important;
-            transition: background-color 0.05s !important;
-        }
+        .particle { position: absolute; background: #222; border: 1px solid #000; pointer-events: none; z-index: 100; }
+        .flash { background-color: white !important; transition: none !important; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="site-title">Tyler's Test Site</div>
-
-    <img src="https://github.com/TylerGamerYT.png" alt="TylerGamerYT Profile Picture" class="pfp">
-
+    <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp">
     <span class="username">Tyler / TylerGamerYT</span>
 
-    <p>
+    <p id="status-text">
         Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
         I made this just for fun and to test how to make one and stuff, etc. 
         You could say "lol," anyways, bye I guess.
     </p>
 
-    <div id="bomb">
-        <div id="timer">00:30</div>
+    <div id="bomb-wrap">
+        <div id="bomb">
+            <div id="timer">01:00</div>
+            <div class="wire-container" id="wire-box">
+                </div>
+        </div>
+        <p style="background:none; font-size: 1rem; margin-top: 15px;">SNIP ALL 6 WIRES TO SURVIVE!</p>
     </div>
 
     <script>
+        const statusText = document.getElementById('status-text');
+        const bombWrap = document.getElementById('bomb-wrap');
         const timerDisplay = document.getElementById('timer');
-        const bomb = document.getElementById('bomb');
+        const wireBox = document.getElementById('wire-box');
         const body = document.body;
-        let timeLeft = 30; 
-        let isOrange = true;
 
-        function updateTimer() {
-            let displaySeconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
-            timerDisplay.innerHTML = `00:${displaySeconds}`;
+        let gameActive = false;
+        let timeLeft = 60;
+        let wiresCut = 0;
+        const totalWires = 6;
+        const wireColors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#e67e22'];
 
-            if (timeLeft <= 5 && timeLeft > 0) {
-                bomb.classList.add('shake');
+        setTimeout(() => {
+            startThreat();
+        }, 30000);
+
+        function startThreat() {
+            statusText.innerHTML = "OH NO THERES A BOMB!!! DISARM IT NOW!!";
+            statusText.classList.add('danger-text');
+            body.classList.add('alert-mode');
+            bombWrap.style.display = 'flex';
+            gameActive = true;
+            createWires();
+            startTimer();
+        }
+
+        function createWires() {
+            wireBox.innerHTML = '';
+            wiresCut = 0;
+            for(let i=0; i<totalWires; i++) {
+                const w = document.createElement('div');
+                w.className = 'wire';
+                w.style.backgroundColor = wireColors[i];
+                w.onclick = function() {
+                    if(!this.classList.contains('cut')) {
+                        this.classList.add('cut');
+                        wiresCut++;
+                        checkWin();
+                    }
+                };
+                wireBox.appendChild(w);
             }
+        }
 
-            if (timeLeft <= 0) {
-                explode();
-            } else {
+        function startTimer() {
+            const countdown = setInterval(() => {
+                if(!gameActive) { clearInterval(countdown); return; }
                 timeLeft--;
+                let displaySecs = timeLeft < 10 ? '0' + timeLeft : timeLeft;
+                timerDisplay.innerHTML = `00:${displaySecs}`;
+                if(timeLeft <= 0) {
+                    clearInterval(countdown);
+                    explode();
+                }
+            }, 1000);
+        }
+
+        function checkWin() {
+            if(wiresCut === totalWires) {
+                gameActive = false;
+                statusText.innerHTML = "BOMB DISARMED. Safe for now, User.";
+                statusText.classList.remove('danger-text');
+                statusText.style.color = "#2ecc71";
+                timerDisplay.style.color = "#2ecc71";
+                setTimeout(() => { location.reload(); }, 5000);
             }
         }
 
         function explode() {
-            bomb.classList.remove('shake');
-            bomb.classList.add('hidden');
+            gameActive = false;
             body.classList.add('flash');
-
-            // Switch background colors
-            isOrange = !isOrange;
-
-            // Create 60 debris particles
-            for (let i = 0; i < 60; i++) {
-                createDebris();
-            }
-
+            bombWrap.classList.add('hidden');
+            for (let i = 0; i < 80; i++) { createDebris(); }
             setTimeout(() => {
                 body.classList.remove('flash');
-                // Apply the new color after flash
-                body.className = isOrange ? 'bg-orange' : 'bg-blue';
-                
-                setTimeout(() => {
-                    bomb.classList.remove('hidden');
-                    timeLeft = 30;
-                }, 1000);
+                statusText.innerHTML = "CRITICAL FAILURE. REBOOTING...";
+                setTimeout(() => { location.reload(); }, 3000);
             }, 150);
         }
 
         function createDebris() {
             const part = document.createElement('div');
-            part.classList.add('particle');
+            part.className = 'particle';
             body.appendChild(part);
-
-            // Make particles look like different sized metal chunks
-            const size = Math.random() * 15 + 5;
+            const size = Math.random() * 18 + 4;
             part.style.width = size + 'px';
             part.style.height = size + 'px';
-            part.style.borderRadius = Math.random() > 0.5 ? '2px' : '50%'; // Mix of squares and circles
-
-            const rect = bomb.getBoundingClientRect();
-            part.style.left = (rect.left + rect.width / 2) + 'px';
-            part.style.top = (rect.top + rect.height / 2) + 'px';
-
+            part.style.left = '50%';
+            part.style.top = '60%';
             const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 15 + 10;
+            const velocity = Math.random() * 25 + 10;
             const vx = Math.cos(angle) * velocity;
             const vy = Math.sin(angle) * velocity;
-            let rotation = 0;
-            const rotSpeed = (Math.random() - 0.5) * 20;
-
+            let rot = 0;
             let opac = 1;
             function move() {
                 part.style.left = (parseFloat(part.style.left) + vx) + 'px';
                 part.style.top = (parseFloat(part.style.top) + vy) + 'px';
-                rotation += rotSpeed;
-                part.style.transform = `rotate(${rotation}deg)`;
-                
+                rot += 10;
+                part.style.transform = `rotate(${rot}deg)`;
                 opac -= 0.015;
                 part.style.opacity = opac;
-
-                if (opac > 0) {
-                    requestAnimationFrame(move);
-                } else {
-                    part.remove();
-                }
+                if (opac > 0) requestAnimationFrame(move); else part.remove();
             }
             move();
         }
-
-        setInterval(updateTimer, 1000);
     </script>
-
 </body>
 </html>
