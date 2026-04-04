@@ -20,22 +20,34 @@
         .bio-container { max-width: 700px; }
         p { font-size: 1.1rem; line-height: 1.6; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-bottom: 15px; }
 
-        /* --- THE BOMB INTERFACE --- */
+        /* --- BOMB UI --- */
         #bomb-wrap { display: none; flex-direction: column; align-items: center; margin-top: 20px; gap: 15px; }
         #bomb { width: 320px; background: #d63031; border-radius: 15px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border-left: 15px solid #b71c1c; }
         #timer { background: #111; color: #ff0000; font-family: 'Courier New', monospace; font-size: 2.5rem; padding: 10px; border-radius: 5px; margin-bottom: 15px; box-shadow: inset 0 0 15px #000; }
         .phase-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
 
-        input, [type="range"] { width: 80%; background: #222; border: 1px solid #555; color: #0f0; margin-top: 10px; padding: 5px; text-align: center; }
+        input, [type="range"] { width: 80%; background: #222; border: 1px solid #555; color: #0f0; margin-top: 10px; padding: 5px; text-align: center; border-radius: 4px; }
         .wire-container { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
         .wire { width: 15px; height: 45px; cursor: pointer; border-radius: 4px; transition: 0.2s; }
         .wire.cut { height: 12px; opacity: 0.2; background: #000 !important; cursor: default; }
-        #final-switch { background: #ffeb3b; color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; animation: blink 0.3s infinite; }
+        #final-switch { background: #ffeb3b; color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; animation: blink 0.3s infinite; text-transform: uppercase; }
         
         .stabilize-bar { height: 15px; background: #555; width: 100%; border-radius: 5px; margin-top: 10px; position: relative; overflow: hidden; }
-        #stabilize-fill { height: 100%; background: #0f0; width: 0%; transition: width 0.1s; }
+        #stabilize-fill { height: 100%; background: #0f0; width: 0%; transition: width 0.1; }
         
+        /* --- AWARD POPUP --- */
+        #award-display { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #f1c40f; color: #000; padding: 35px; border-radius: 25px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.8); z-index: 2000; border: 6px solid #fff;
+            min-width: 280px;
+        }
+        .award-title { font-size: 2.2rem; font-weight: 900; margin: 15px 0; line-height: 1; }
+        .award-icon { font-size: 4.5rem; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); }
+        #award-desc { font-weight: bold; font-size: 0.9rem; opacity: 0.8; }
+        #final-message { margin-top: 15px; font-style: italic; font-size: 1.1rem; border-top: 2px solid rgba(0,0,0,0.1); padding-top: 10px; }
+
         .particle { position: absolute; background: #333; border: 1px solid #111; pointer-events: none; z-index: 1000; }
         .flash { background-color: white !important; transition: none !important; }
     </style>
@@ -80,9 +92,17 @@
             </div>
 
             <div id="phase5" class="phase-box hidden">
-                <button id="final-switch" onclick="winGame()">FINAL OVERRIDE</button>
+                <button id="final-switch" onclick="winGame()">Final Override</button>
             </div>
         </div>
+    </div>
+
+    <div id="award-display">
+        <div class="award-icon" id="award-emoji">🏆</div>
+        <div style="text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Achievement Unlocked</div>
+        <div class="award-title" id="award-name">THE SURVIVOR</div>
+        <div id="award-desc">MISSION ACCOMPLISHED</div>
+        <div id="final-message"></div>
     </div>
 
     <script>
@@ -90,10 +110,14 @@
         const bombWrap = document.getElementById('bomb-wrap');
         const timerDisplay = document.getElementById('timer');
         const body = document.body;
+        const awardBox = document.getElementById('award-display');
+        const awardName = document.getElementById('award-name');
+        const awardEmoji = document.getElementById('award-emoji');
+        const awardDesc = document.getElementById('award-desc');
+        const finalMsg = document.getElementById('final-message');
 
         let gameActive = false, timeLeft = 60, wiresCut = 0, stabProgress = 0;
 
-        // BOMB SPAWNS 15 SECONDS LATER
         setTimeout(startThreat, 15000);
 
         function startThreat() {
@@ -105,7 +129,6 @@
             startTimer();
         }
 
-        // Phase 1: Keypad Logic
         document.getElementById('code-input').addEventListener('input', (e) => {
             if(e.target.value === "1234") {
                 document.getElementById('phase1').classList.add('hidden');
@@ -113,7 +136,6 @@
             }
         });
 
-        // Phase 2: Calibration Logic
         document.getElementById('signal-slider').addEventListener('input', (e) => {
             document.getElementById('signal-val').innerText = e.target.value + "%";
             if(e.target.value == "50") {
@@ -123,7 +145,6 @@
             }
         });
 
-        // Phase 3: Wire Cutting Logic
         function createWires() {
             const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6', '#e67e22'];
             const box = document.getElementById('wire-box');
@@ -144,7 +165,6 @@
             });
         }
 
-        // Phase 4: Motion Sensor Logic
         function startStabilize() {
             let isMoving = false;
             window.onmousemove = () => { isMoving = true; setTimeout(()=>isMoving=false, 100); };
@@ -169,13 +189,29 @@
             }, 1000);
         }
 
+        function triggerAward(title, emoji, desc, msg, color) {
+            awardName.innerText = title;
+            awardEmoji.innerText = emoji;
+            awardDesc.innerText = desc;
+            finalMsg.innerText = msg;
+            awardBox.style.background = color;
+            awardBox.style.display = 'block';
+        }
+
         function winGame() { 
             gameActive = false; 
             statusText.innerHTML = "BOMB DISARMED. Safe for now, User."; 
             statusText.classList.remove('danger-text');
             statusText.style.color = "#2ecc71";
             bombWrap.classList.add('hidden');
-            setTimeout(() => location.reload(), 5000); 
+
+            if(timeLeft <= 10) {
+                triggerAward("CLOSE CALL", "💀", "DISARMED WITH " + timeLeft + "s LEFT!", "Cutting it a bit close there, don't you think?", "#e67e22");
+            } else {
+                triggerAward("THE SURVIVOR", "🏆", "BOMB DISARMED SUCCESSFULLY", "The city is safe... for now.", "#f1c40f");
+            }
+
+            setTimeout(() => location.reload(), 6000); 
         }
 
         function explode() {
@@ -183,7 +219,11 @@
             body.classList.add('flash');
             bombWrap.classList.add('hidden');
             for (let i = 0; i < 100; i++) { createDebris(); }
-            setTimeout(() => { location.reload(); }, 2500);
+            
+            triggerAward("YOU LET IT BLOW UP", "💥", "TOTAL ANNIHILATION", "Well, that's one way to end the day. Everything is gone.", "#c0392b");
+            awardBox.style.color = "white";
+
+            setTimeout(() => { location.reload(); }, 6000);
         }
 
         function createDebris() {
