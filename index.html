@@ -5,16 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tyler's Ultimate Test Site</title>
+    <style>
+        :root {
+            --accent: #f1c40f;
+            --bg: #1a1a1a;
+            --danger: #d63031;
+            --card-orange: #e67e22;
+        }
 
 ```
-<style>
-    :root {
-        --accent: #f1c40f;
-        --bg: #1a1a1a;
-        --danger: #d63031;
-        --card-orange: #e67e22;
-    }
-
     body {
         margin: 0;
         padding: 20px;
@@ -31,6 +30,7 @@
         background-color: #222;
     }
 
+    /* --- AUTH SYSTEM --- */
     #auth-overlay {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -81,6 +81,7 @@
         margin-top: 10px;
     }
 
+    /* --- THEMES --- */
     .theme-matrix { --bg: #000; --accent: #0f0; color: #0f0 !important; font-family: 'Courier New', monospace; }
     .theme-cyber { --bg: #2d0036; --accent: #00fff2; color: #00fff2 !important; }
     .theme-gameboy { --bg: #8bac0f; --accent: #306230; color: #306230 !important; }
@@ -91,9 +92,9 @@
         font-weight: 900;
         margin-top: 20px;
         margin-bottom: 5px;
+        text-shadow: 0 5px 15px rgba(0,0,0,0.5);
         cursor: pointer;
         user-select: none;
-        transition: 0.3s;
     }
 
     #top-right-ui {
@@ -118,6 +119,7 @@
     }
 
     #pfp-wrapper {
+        position: relative;
         width: 160px;
         height: 160px;
     }
@@ -135,7 +137,14 @@
         font-weight: 800;
     }
 
-    #bomb-container { display: none; }
+    #bomb-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 400px;
+    }
 
     .hidden { display: none !important; }
 </style>
@@ -146,8 +155,9 @@
 <body>
 
 <div id="auth-overlay">
-    <h1 style="color:var(--accent);">TYLER'S SITE</h1>
-    <div class="auth-box">
+    <h1 style="color:var(--accent); font-size:2.5rem;">TYLER'S SITE</h1>
+    <div class="auth-box" id="login-box">
+        <h2>Login / Register</h2>
         <input type="text" id="auth-user" placeholder="Username">
         <input type="password" id="auth-pass" placeholder="Password">
         <button class="auth-btn" onclick="handleAuth()">GO</button>
@@ -161,202 +171,67 @@
     <button class="ui-btn" onclick="logout()">🚪</button>
 </div>
 
-<div id="site-title">Tyler's Test Site</div>
+<div id="site-title" onclick="labCounter()">Tyler's Test Site</div>
 
 <div id="pfp-wrapper">
-    <img src="https://github.com/TylerGamerYT.png" class="pfp" id="main-pfp">
+    <img src="https://github.com/TylerGamerYT.png" class="pfp" id="main-pfp" onclick="toggleDVD()">
 </div>
 
-<span class="user-tag" id="display-username">Guest</span>
+<span class="user-tag" id="display-username">Tyler</span>
+
+<div id="stats-panel">
+    <span>🏆 BEST DISARM: <span id="val-best">0s</span></span>
+    <span>🔥 CLOSEST CALL: <span id="val-close">0s</span></span>
+</div>
+
+<div id="intro-bio">
+    <p>
+        Hello, I am Tyler, welcome to my test GitHub.io game.
+    </p>
+</div>
 
 <div id="bomb-container">
     <div id="digital-timer">01:00</div>
+
+```
+<div id="step-1">
+    <input type="text" id="input-code" maxlength="4" placeholder="----">
 </div>
 
-<!-- IMPORTANT: JS FILE LINK -->
+<div id="step-2" class="hidden">
+    <input type="range" id="slider-freq" min="0" max="100">
+    <div id="freq-readout">0%</div>
+</div>
+
+<div id="step-3" class="hidden">
+    <div id="wire-grid"></div>
+</div>
+
+<div id="step-4" class="hidden">
+    <div id="gyro-fill"></div>
+</div>
+
+<div id="step-5" class="hidden">
+    <button onclick="triggerWin()">FINAL</button>
+</div>
+```
+
+</div>
+
+<div id="award-card">
+    <div id="award-main-text"></div>
+    <div id="award-sub-text"></div>
+</div>
+
+<div id="lab-panel"></div>
+
+<div id="sprite-sus">📮</div>
+<div id="sprite-bus">🚌💨</div>
+
+<!-- ✅ THIS IS THE ONLY CHANGE -->
 
 <script src="script.js"></script>
 
 </body>
 </html>
-<!DOCTYPE html>
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tyler's Ultimate Test Site</title>
-
-```
-<style>
-    :root {
-        --accent: #f1c40f;
-        --bg: #1a1a1a;
-        --danger: #d63031;
-        --card-orange: #e67e22;
-    }
-
-    body {
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        min-height: 100vh;
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        color: white;
-        text-align: center;
-        overflow-x: hidden;
-        transition: background-color 1s ease, color 0.5s ease;
-        background-color: #222;
-    }
-
-    #auth-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: #111;
-        z-index: 20000;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .auth-box {
-        background: #222;
-        padding: 30px;
-        border-radius: 20px;
-        border: 3px solid var(--accent);
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        width: 300px;
-    }
-
-    @keyframes boxShake {
-        0% { transform: translateX(0); }
-        25% { transform: translateX(10px); }
-        50% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
-        100% { transform: translateX(0); }
-    }
-
-    .auth-box input {
-        width: 90%;
-        padding: 10px;
-        margin: 10px 0;
-        background: #111;
-        border: 1px solid #444;
-        color: white;
-        border-radius: 5px;
-    }
-
-    .auth-btn {
-        background: var(--accent);
-        color: black;
-        border: none;
-        padding: 10px 20px;
-        font-weight: bold;
-        cursor: pointer;
-        border-radius: 5px;
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .theme-matrix { --bg: #000; --accent: #0f0; color: #0f0 !important; font-family: 'Courier New', monospace; }
-    .theme-cyber { --bg: #2d0036; --accent: #00fff2; color: #00fff2 !important; }
-    .theme-gameboy { --bg: #8bac0f; --accent: #306230; color: #306230 !important; }
-    .alert-active { background-color: #0f0f0f !important; }
-
-    #site-title {
-        font-size: 3.5rem;
-        font-weight: 900;
-        margin-top: 20px;
-        margin-bottom: 5px;
-        cursor: pointer;
-        user-select: none;
-        transition: 0.3s;
-    }
-
-    #top-right-ui {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        z-index: 1000;
-    }
-
-    .ui-btn {
-        background: rgba(255,255,255,0.1);
-        border: 2px solid rgba(255,255,255,0.2);
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 1.5rem;
-    }
-
-    #pfp-wrapper {
-        width: 160px;
-        height: 160px;
-    }
-
-    img.pfp {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        border: 6px solid white;
-        cursor: pointer;
-    }
-
-    .user-tag {
-        font-size: 2.2rem;
-        font-weight: 800;
-    }
-
-    #bomb-container { display: none; }
-
-    .hidden { display: none !important; }
-</style>
-```
-
-</head>
-
-<body>
-
-<div id="auth-overlay">
-    <h1 style="color:var(--accent);">TYLER'S SITE</h1>
-    <div class="auth-box">
-        <input type="text" id="auth-user" placeholder="Username">
-        <input type="password" id="auth-pass" placeholder="Password">
-        <button class="auth-btn" onclick="handleAuth()">GO</button>
-        <p id="auth-msg"></p>
-    </div>
-</div>
-
-<div id="top-right-ui">
-    <button class="ui-btn" onclick="toggleAudio()" id="music-btn">📻</button>
-    <button class="ui-btn" onclick="openLab()">🧪</button>
-    <button class="ui-btn" onclick="logout()">🚪</button>
-</div>
-
-<div id="site-title">Tyler's Test Site</div>
-
-<div id="pfp-wrapper">
-    <img src="https://github.com/TylerGamerYT.png" class="pfp" id="main-pfp">
-</div>
-
-<span class="user-tag" id="display-username">Guest</span>
-
-<div id="bomb-container">
-    <div id="digital-timer">01:00</div>
-</div>
-
-<!-- IMPORTANT: JS FILE LINK -->
-
-<script src="script.js"></script>
-
-</body>
-</html>
