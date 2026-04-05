@@ -28,6 +28,58 @@
             background-color: #222;
         }
 
+        /* --- AUTH SYSTEM --- */
+        #auth-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #111;
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-box {
+            background: #222;
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid var(--accent);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 300px;
+        }
+
+        /* Shake animation for the hack alert */
+        @keyframes boxShake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .auth-box input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #111;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .auth-btn {
+            background: var(--accent);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
         /* --- THEMES (THE LAB) --- */
         .theme-matrix { --bg: #000; --accent: #0f0; color: #0f0 !important; font-family: 'Courier New', monospace; }
         .theme-cyber { --bg: #2d0036; --accent: #00fff2; color: #00fff2 !important; }
@@ -43,11 +95,10 @@
             cursor: pointer;
             user-select: none;
             transition: 0.3s;
-            -webkit-user-select: none; /* Prevents text selection on long press */
+            -webkit-user-select: none;
         }
         #site-title:hover { transform: scale(1.05); color: var(--accent); }
 
-        /* --- CONTROLS --- */
         #top-right-ui {
             position: fixed;
             top: 20px;
@@ -75,7 +126,6 @@
         }
         .ui-btn:hover { background: var(--accent); color: black; transform: scale(1.1); }
 
-        /* --- PFP & DVD --- */
         #pfp-wrapper {
             position: relative;
             width: 160px;
@@ -124,7 +174,6 @@
             gap: 20px;
         }
 
-        /* --- BOMB UI --- */
         #bomb-container {
             display: none;
             flex-direction: column;
@@ -181,7 +230,7 @@
 
         .hidden { display: none !important; }
 
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             width: 90%;
             background: #111;
             border: 2px solid #444;
@@ -224,7 +273,6 @@
         }
         #final-button:active { transform: translateY(4px); box-shadow: 0 2px 0 #fbc02d; }
 
-        /* --- ACHIEVEMENT / CLOSE CALL CARD --- */
         #award-card {
             display: none;
             position: fixed;
@@ -251,7 +299,6 @@
         .award-desc { font-weight: 800; text-transform: uppercase; opacity: 0.9; margin-bottom: 20px; font-size: 1rem; }
         .award-footer { border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; font-style: italic; font-weight: 600; font-size: 1.3rem; }
 
-        /* --- DEV LAB PANEL --- */
         #lab-panel {
             display: none;
             background: #111;
@@ -273,7 +320,6 @@
         }
         #lab-panel button:hover { opacity: 0.8; transform: scale(1.02); }
 
-        /* --- MOBILE SECRET OVERLAY --- */
         #mobile-secret-input {
             display: none;
             position: fixed;
@@ -287,16 +333,27 @@
             border-radius: 15px;
         }
 
-        /* --- SPRITES --- */
         #sprite-sus { position: fixed; bottom: 30px; left: -180px; font-size: 75px; transition: 3s linear; pointer-events: none; z-index: 10000; }
         #sprite-bus { position: fixed; top: 20%; left: -250px; font-size: 70px; transition: 5s linear; pointer-events: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
+    <div id="auth-overlay">
+        <h1 style="color:var(--accent); font-size:2.5rem; margin-bottom:10px;">TYLER'S SITE</h1>
+        <div class="auth-box" id="login-box">
+            <h2 style="margin-top:0">Login / Register</h2>
+            <input type="text" id="auth-user" placeholder="Username" style="font-size:1rem; width:80%">
+            <input type="password" id="auth-pass" placeholder="Password" style="font-size:1rem; width:80%">
+            <button class="auth-btn" onclick="handleAuth()">GO</button>
+            <p id="auth-msg" style="color:red; font-size:0.8rem; margin-top:10px;"></p>
+        </div>
+    </div>
+
     <div id="top-right-ui">
         <button class="ui-btn" onclick="toggleAudio()" id="music-btn">📻</button>
         <button class="ui-btn" onclick="openLab()">🧪</button>
+        <button class="ui-btn" onclick="logout()" style="font-size:1rem">🚪</button>
     </div>
 
     <div id="site-title" onclick="labCounter()" oncontextmenu="return false;" ontouchstart="startTouchSecret()" ontouchend="endTouchSecret()">Tyler's Test Site</div>
@@ -305,7 +362,7 @@
         <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp" id="main-pfp" onclick="toggleDVD()">
     </div>
     
-    <span class="user-tag">Tyler / TylerGamerYT</span>
+    <span class="user-tag" id="display-username">Tyler / TylerGamerYT</span>
 
     <div id="stats-panel">
         <span>🏆 BEST DISARM: <span id="val-best">0s</span></span>
@@ -328,31 +385,25 @@
 
     <div id="bomb-container">
         <div id="alert-banner">🚨 DISARM THE BOMB, USER!</div>
-        
         <div id="bomb-case">
             <div id="digital-timer">01:00</div>
-            
             <div id="step-1" class="game-step">
                 <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 1: BYPASS KEYPAD (CODE 1234)</label>
                 <input type="text" id="input-code" maxlength="4" placeholder="----">
             </div>
-
             <div id="step-2" class="game-step hidden">
                 <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 2: FREQUENCY CALIBRATION (50%)</label>
                 <input type="range" id="slider-freq" min="0" max="100" value="0">
                 <div id="freq-readout" style="font-weight:900; color:var(--accent); font-size:1.5rem;">0%</div>
             </div>
-
             <div id="step-3" class="game-step hidden">
                 <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 3: SEVER CONNECTORS</label>
                 <div class="wire-set" id="wire-grid"></div>
             </div>
-
             <div id="step-4" class="game-step hidden">
                 <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 4: GYRO STABILIZATION (FREEZE!)</label>
                 <div id="gyro-track"><div id="gyro-fill"></div></div>
             </div>
-
             <div id="step-5" class="game-step hidden">
                 <button id="final-button" onclick="triggerWin()">FINAL OVERRIDE</button>
             </div>
@@ -364,9 +415,7 @@
         <div class="award-header">Achievement Unlocked</div>
         <div class="award-title" id="award-main-text">CLOSE CALL</div>
         <div class="award-desc" id="award-sub-text">DISARMED WITH 5s LEFT!</div>
-        <div class="award-footer">
-            Cutting it a bit close there, don't you think?
-        </div>
+        <div class="award-footer">Cutting it a bit close there, don't you think?</div>
     </div>
 
     <div id="lab-panel">
@@ -386,8 +435,76 @@
         let isPlaying = false, timeRemaining = 60, cutCount = 0, balanceVal = 0;
         let audioOn = false;
         let touchTimer;
+        let currentUser = null;
 
-        // MUSIC LOGIC
+        // --- ACCOUNT LOGIC ---
+        function handleAuth() {
+            const u = document.getElementById('auth-user').value.trim();
+            const p = document.getElementById('auth-pass').value;
+            const msg = document.getElementById('auth-msg');
+
+            if(!u || !p) { msg.innerText = "Please fill in both fields!"; return; }
+
+            // THE "SECRET" TYLER BACKDOOR
+            if(u.toLowerCase() === "tyler") {
+                if(p === "1234") {
+                    // Start shake animation
+                    document.getElementById('login-box').style.animation = "boxShake 0.2s 5";
+                    
+                    // Message 1: The Shout
+                    msg.style.color = "#ff4b4b";
+                    msg.style.fontSize = "1.1rem";
+                    msg.style.fontWeight = "900";
+                    msg.innerText = "OI! WHO DARES TO HACK TYLER?";
+                    
+                    // Message 2: The Casual Let-in
+                    setTimeout(() => {
+                        msg.style.color = "#f1c40f";
+                        msg.style.fontWeight = "bold";
+                        msg.innerText = "Fine, I'll let you stay on since there's nothing important on this account anyway.";
+                        
+                        // Actually log in
+                        setTimeout(() => {
+                            loginSuccess("Tyler");
+                        }, 3000);
+                    }, 2000);
+                } else {
+                    msg.innerText = "Incorrect password for Tyler!";
+                }
+                return;
+            }
+
+            // Normal User Logic
+            let accounts = JSON.parse(localStorage.getItem('fake_db') || "{}");
+            if(accounts[u]) {
+                if(accounts[u] === p) { loginSuccess(u); } 
+                else { msg.innerText = "Incorrect password!"; }
+            } else {
+                accounts[u] = p;
+                localStorage.setItem('fake_db', JSON.stringify(accounts));
+                loginSuccess(u);
+            }
+        }
+
+        function loginSuccess(username) {
+            currentUser = username;
+            sessionStorage.setItem('loggedInUser', username);
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('display-username').innerText = username;
+            refreshStats();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('loggedInUser');
+            location.reload();
+        }
+
+        window.onload = () => {
+            let saved = sessionStorage.getItem('loggedInUser');
+            if(saved) loginSuccess(saved);
+        };
+
+        // --- REST OF THE GAME CODE ---
         const soundtrack = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
         soundtrack.loop = true;
 
@@ -402,12 +519,11 @@
             }
         }
 
-        // MOBILE SECRET LOGIC
         function startTouchSecret() {
             touchTimer = setTimeout(() => {
                 document.getElementById('mobile-secret-input').style.display = 'block';
                 document.getElementById('mob-input').focus();
-            }, 1500); // Long press for 1.5 seconds
+            }, 1500);
         }
         function endTouchSecret() { clearTimeout(touchTimer); }
 
@@ -426,14 +542,12 @@
             if(cmd === "godmode") { timeRemaining=99; triggerWin(); }
         }
 
-        // STATS
         function refreshStats() {
-            document.getElementById('val-best').innerText = localStorage.getItem('t_best') || "0s";
-            document.getElementById('val-close').innerText = localStorage.getItem('t_close') || "0s";
+            if(!currentUser) return;
+            document.getElementById('val-best').innerText = localStorage.getItem('t_best_'+currentUser) || "0s";
+            document.getElementById('val-close').innerText = localStorage.getItem('t_close_'+currentUser) || "0s";
         }
-        refreshStats();
 
-        // LAB ACCESS
         function labCounter() { 
             labHits++; 
             if(labHits >= 5) openLab(); 
@@ -443,7 +557,6 @@
         function applyTheme(t) { document.body.className = "theme-"+t; }
         function clearAllData() { localStorage.clear(); location.reload(); }
 
-        // DVD BOUNCE
         function toggleDVD() { 
             isDVD = !isDVD; 
             if(isDVD) { 
@@ -464,18 +577,14 @@
             requestAnimationFrame(moveDVD);
         }
 
-        // SECRETS (PC)
         window.addEventListener('keydown', (e) => {
             if(document.activeElement.tagName === 'INPUT') return;
             comboKeys += e.key.toLowerCase();
-            
-            // Re-using processSecret logic for keys
             if(comboKeys.endsWith("sus")) { processSecret("sus"); comboKeys=""; }
             if(comboKeys.endsWith("fortnite")) { processSecret("fortnite"); comboKeys=""; }
             if(comboKeys.endsWith("creeper")) { processSecret("creeper"); comboKeys=""; }
             if(comboKeys.endsWith("roblox")) { processSecret("roblox"); comboKeys=""; }
             if(comboKeys.endsWith("godmode")) { processSecret("godmode"); comboKeys=""; }
-            
             if(comboKeys.length > 30) comboKeys = comboKeys.slice(-15);
         });
 
@@ -485,7 +594,6 @@
             setTimeout(() => { s.style.left = "-250px"; }, dur);
         }
 
-        // BOMB GAME ENGINE
         setTimeout(() => {
             document.getElementById('bomb-container').style.display='flex';
             document.getElementById('intro-bio').style.display = 'none';
@@ -495,17 +603,14 @@
                 if(!isPlaying) { clearInterval(ticker); return; }
                 timeRemaining--;
                 document.getElementById('digital-timer').innerText = `00:${timeRemaining<10?'0'+timeRemaining:timeRemaining}`;
-                
                 if(timeRemaining <= 10) {
                     document.getElementById('digital-timer').style.animation = "shake 0.1s infinite";
                     if(audioOn) soundtrack.playbackRate = 1.5;
                 }
-                
                 if(timeRemaining <= 0) { clearInterval(ticker); failGame(); }
             }, 1000);
         }, 12000);
 
-        // Gameplay Interaction Logic
         document.getElementById('input-code').addEventListener('input', (e) => {
             if(e.target.value === "1234") { 
                 document.getElementById('step-1').classList.add('hidden'); 
@@ -524,7 +629,7 @@
 
         function generateWires() {
             const grid = document.getElementById('wire-grid');
-            grid.innerHTML = ""; // Clear for mobile re-renders
+            grid.innerHTML = "";
             const colors = ['#e74c3c','#3498db','#f1c40f','#2ecc71','#9b59b6','#e67e22'];
             colors.forEach(c => {
                 let w = document.createElement('div'); w.className = 'wire-strand'; w.style.background = c;
@@ -544,11 +649,8 @@
 
         function runGyro() {
             let isMoving = false; 
-            // PC: Mouse move
             window.onmousemove = () => { isMoving = true; setTimeout(()=>isMoving=false,100); };
-            // MOBILE: Touch move
             window.ontouchmove = () => { isMoving = true; setTimeout(()=>isMoving=false,100); };
-
             let gi = setInterval(() => {
                 if(!isPlaying) { clearInterval(gi); return; }
                 if(!isMoving) balanceVal += 3; else balanceVal = 0;
@@ -565,35 +667,25 @@
             isPlaying = false;
             document.getElementById('bomb-container').style.display='none';
             const card = document.getElementById('award-card');
-            const mainText = document.getElementById('award-main-text');
-            const subText = document.getElementById('award-sub-text');
-            const footer = document.querySelector('.award-footer');
-            
             card.style.display = 'block';
 
             if (timeRemaining === 99) {
-                card.style.background = "linear-gradient(135deg, #00fff2, #004e4a)";
-                mainText.innerText = "GODMODE";
-                subText.innerText = "CHEATER CHEATER PEANUT BUTTER EATER";
-                footer.innerText = "How'd you do that, Tyler?";
+                document.getElementById('award-main-text').innerText = "GODMODE";
+                document.getElementById('award-sub-text').innerText = "CHEATER CHEATER PEANUT BUTTER EATER";
             } 
             else if (timeRemaining <= 10 && timeRemaining > 0) {
-                card.style.background = "linear-gradient(135deg, #e67e22, #c0392b)";
-                mainText.innerText = "CLOSE CALL";
-                subText.innerText = `DISARMED WITH ${timeRemaining}s LEFT!`;
-                footer.innerText = "Cutting it a bit close there, don't you think?";
-                localStorage.setItem('t_close', timeRemaining + "s");
+                document.getElementById('award-main-text').innerText = "CLOSE CALL";
+                document.getElementById('award-sub-text').innerText = `DISARMED WITH ${timeRemaining}s LEFT!`;
+                localStorage.setItem('t_close_'+currentUser, timeRemaining + "s");
             } 
             else {
-                card.style.background = "linear-gradient(135deg, #2ecc71, #27ae60)";
-                mainText.innerText = "SURVIVOR";
-                subText.innerText = "MISSION ACCOMPLISHED";
-                footer.innerText = "You handled that with expertise.";
+                document.getElementById('award-main-text').innerText = "SURVIVOR";
+                document.getElementById('award-sub-text').innerText = "MISSION ACCOMPLISHED";
             }
 
-            let lastBest = parseInt(localStorage.getItem('t_best')) || 0;
+            let lastBest = parseInt(localStorage.getItem('t_best_'+currentUser)) || 0;
             if(timeRemaining > lastBest) {
-                localStorage.setItem('t_best', timeRemaining + "s");
+                localStorage.setItem('t_best_'+currentUser, timeRemaining + "s");
             }
             
             refreshStats();
