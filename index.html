@@ -437,7 +437,7 @@
         let touchTimer;
         let currentUser = null;
 
-        // --- ACCOUNT LOGIC ---
+// --- ACCOUNT LOGIC ---
         function handleAuth() {
             const u = document.getElementById('auth-user').value.trim();
             const p = document.getElementById('auth-pass').value;
@@ -445,71 +445,67 @@
 
             if(!u || !p) { msg.innerText = "Please fill in both fields!"; return; }
 
-            // THE "SECRET" TYLER BACKDOOR
+            // 1. THE "SECRET" TYLER BACKDOOR
             if(u.toLowerCase() === "tyler") {
                 if(p === "1234") {
-                    // Start shake animation
                     document.getElementById('login-box').style.animation = "boxShake 0.2s 5";
-                    
-                    // Message 1: The Shout
                     msg.style.color = "#ff4b4b";
                     msg.style.fontSize = "1.1rem";
                     msg.style.fontWeight = "900";
                     msg.innerText = "OI! WHO DARES TO HACK TYLER?";
                     
-                    // Message 2: The Casual Let-in
                     setTimeout(() => {
                         msg.style.color = "#f1c40f";
                         msg.style.fontWeight = "bold";
                         msg.innerText = "Fine, I'll let you stay on since there's nothing important on this account anyway.";
-                        
-                        // Actually log in
-                        setTimeout(() => {
-                            loginSuccess("Tyler");
-                        }, 3000);
+                        setTimeout(() => { loginSuccess("Tyler"); }, 3000);
                     }, 2000);
                 } else {
                     msg.innerText = "Incorrect password for Tyler!";
                 }
-                return;
+                return; // Stop here so it doesn't run normal logic
             }
 
-    // NEW: THE "TYLERGAMERYT" GAMER BAIT
-    if(u.toLowerCase() === "tylergameryt") {
-        if(p === "2222") {
-            msg.style.color = "#00fff2"; // Cyberpunk blue
-            msg.innerText = "Connecting to TylerGamerYT's Gaming Vault...";
-            
-            setTimeout(() => {
-                msg.style.color = "#e67e22"; // Orange
-                msg.innerText = "Warning: 0 V-Bucks found. 0 Wins found. This account is kind of mid.";
-                setTimeout(() => { 
-                    loginSuccess("TylerGamerYT"); 
-                }, 3000);
-            }, 2000);
-        } else {
-            msg.innerText = "Wrong pin for the Gamer Vault!";
-        }
-        return;
+            // 2. THE "TYLERGAMERYT" GAMER BAIT
+            if(u.toLowerCase() === "tylergameryt") {
+                if(p === "2222") {
+                    msg.style.color = "#00fff2"; // Cyberpunk blue
+                    msg.innerText = "Connecting to TylerGamerYT's Gaming Vault...";
+                    
+                    setTimeout(() => {
+                        msg.style.color = "#e67e22"; // Orange
+                        msg.innerText = "Warning: 0 V-Bucks found. 0 Wins found. This account is kind of mid.";
+                        setTimeout(() => { 
+                            loginSuccess("TylerGamerYT"); 
+                        }, 3000);
+                    }, 2000);
+                } else {
+                    msg.innerText = "Wrong pin for the Gamer Vault!";
+                }
+                return; // Stop here so it doesn't run normal logic
+            }
 
-            // Normal User Logic
+            // 3. Normal User Logic (Only runs if the two above don't match)
             let accounts = JSON.parse(localStorage.getItem('fake_db') || "{}");
             if(accounts[u]) {
-                if(accounts[u] === p) { loginSuccess(u); } 
-                else { msg.innerText = "Incorrect password!"; }
+                if(accounts[u] === p) { 
+                    loginSuccess(u); 
+                } else { 
+                    msg.innerText = "Incorrect password!"; 
+                }
             } else {
                 accounts[u] = p;
                 localStorage.setItem('fake_db', JSON.stringify(accounts));
                 loginSuccess(u);
             }
-        }
+        } // This bracket closes the handleAuth function correctly
 
         function loginSuccess(username) {
             currentUser = username;
             sessionStorage.setItem('loggedInUser', username);
             document.getElementById('auth-overlay').style.display = 'none';
             document.getElementById('display-username').innerText = username;
-            refreshStats();
+            if (typeof refreshStats === "function") refreshStats();
         }
 
         function logout() {
