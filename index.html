@@ -1,97 +1,99 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tyler's Ultimate Test Site</title>
 
-```
-<style>
-    body {
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-        font-family: Arial, sans-serif;
-        background: #222;
-        color: white;
-        text-align: center;
-    }
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: white;
+            text-align: center;
+        }
 
-    #auth-overlay {
-        position: fixed;
-        inset: 0;
-        background: #111;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-    }
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
 
-    .auth-box {
-        background: #222;
-        padding: 25px;
-        border-radius: 12px;
-        width: 280px;
-    }
+        .auth-box {
+            background: #222;
+            padding: 25px;
+            border-radius: 12px;
+            width: 280px;
+        }
 
-    input {
-        width: 90%;
-        padding: 10px;
-        margin: 8px 0;
-    }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+        }
 
-    button {
-        padding: 10px;
-        cursor: pointer;
-        width: 100%;
-    }
+        button {
+            padding: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
 
-    #top-right-ui {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+        #top-right-ui {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    .ui-btn {
-        width: 50px;
-        height: 50px;
-    }
+        .ui-btn {
+            width: 50px;
+            height: 50px;
+        }
 
-    #pfp-wrapper {
-        width: 150px;
-        height: 150px;
-        margin-top: 20px;
-    }
+        #pfp-wrapper {
+            width: 150px;
+            height: 150px;
+            margin-top: 20px;
+        }
 
-    #main-pfp {
-        width: 100%;
-        border-radius: 50%;
-        cursor: pointer;
-        position: relative;
-    }
+        #main-pfp {
+            width: 100%;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+        }
 
-    .hidden { display: none; }
+        .hidden {
+            display: none;
+        }
 
-    #bomb-container {
-        display: none;
-        margin-top: 20px;
-    }
-</style>
-```
+        #bomb-container {
+            display: none;
+            margin-top: 20px;
+        }
 
+        #lab-panel {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
 
 <!-- LOGIN -->
-
 <div id="auth-overlay">
     <div class="auth-box">
         <h2>Login</h2>
@@ -103,7 +105,6 @@
 </div>
 
 <!-- UI -->
-
 <div id="top-right-ui">
     <button class="ui-btn" id="music-btn" onclick="toggleAudio()">📻</button>
     <button class="ui-btn" onclick="openLab()">🧪</button>
@@ -119,54 +120,45 @@
 <h2 id="display-username">Tyler</h2>
 
 <!-- STATS -->
-
 <div>
     <p>🏆 BEST: <span id="val-best">0s</span></p>
     <p>🔥 CLOSE: <span id="val-close">0s</span></p>
 </div>
 
 <!-- GAME -->
-
 <div id="bomb-container">
+    <h2 id="digital-timer">01:00</h2>
 
-```
-<h2 id="digital-timer">01:00</h2>
+    <div id="step-1">
+        <input id="input-code" placeholder="----">
+    </div>
 
-<div id="step-1">
-    <input id="input-code" placeholder="----">
-</div>
+    <div id="step-2" class="hidden">
+        <input type="range" id="slider-freq" min="0" max="100">
+        <p id="freq-readout">0%</p>
+    </div>
 
-<div id="step-2" class="hidden">
-    <input type="range" id="slider-freq" min="0" max="100">
-    <p id="freq-readout">0%</p>
-</div>
+    <div id="step-3" class="hidden">
+        <div id="wire-grid"></div>
+    </div>
 
-<div id="step-3" class="hidden">
-    <div id="wire-grid"></div>
-</div>
+    <div id="step-4" class="hidden">
+        <div id="gyro-fill"></div>
+    </div>
 
-<div id="step-4" class="hidden">
-    <div id="gyro-fill"></div>
-</div>
-
-<div id="step-5" class="hidden">
-    <button onclick="triggerWin()">FINAL</button>
-</div>
-```
-
+    <div id="step-5" class="hidden">
+        <button onclick="triggerWin()">FINAL</button>
+    </div>
 </div>
 
 <!-- LAB -->
-
 <div id="lab-panel"></div>
 
 <!-- SPRITES -->
-
 <div id="sprite-sus">📮</div>
 <div id="sprite-bus">🚌💨</div>
 
 <!-- SCRIPT -->
-
 <script src="script.js"></script>
 
 </body>
