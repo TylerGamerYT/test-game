@@ -6,46 +6,72 @@
     <title>Tyler's Ultimate Test Site</title>
 
     <style>
+        :root {
+            --accent: #f1c40f;
+            --bg: #1a1a1a;
+            --danger: #d63031;
+            --card-orange: #e67e22;
+        }
+
         body {
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: #222;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: white;
             text-align: center;
+            overflow-x: hidden;
+            background-color: #222;
         }
 
         #auth-overlay {
             position: fixed;
-            inset: 0;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: #111;
+            z-index: 20000;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
         }
 
         .auth-box {
             background: #222;
-            padding: 25px;
-            border-radius: 12px;
-            width: 280px;
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid var(--accent);
+            width: 300px;
         }
 
-        input {
+        .auth-box input {
             width: 90%;
             padding: 10px;
-            margin: 8px 0;
+            margin: 10px 0;
+            background: #111;
+            border: 1px solid #444;
+            color: white;
         }
 
-        button {
+        .auth-btn {
+            background: var(--accent);
+            color: black;
+            border: none;
             padding: 10px;
-            cursor: pointer;
             width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #site-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-top: 20px;
+            cursor: pointer;
         }
 
         #top-right-ui {
@@ -60,33 +86,42 @@
         .ui-btn {
             width: 50px;
             height: 50px;
+            cursor: pointer;
         }
 
         #pfp-wrapper {
-            width: 150px;
-            height: 150px;
-            margin-top: 20px;
+            width: 160px;
+            height: 160px;
         }
 
-        #main-pfp {
+        .pfp {
             width: 100%;
             border-radius: 50%;
+            border: 6px solid white;
             cursor: pointer;
-            position: relative;
-        }
-
-        .hidden {
-            display: none;
         }
 
         #bomb-container {
             display: none;
+            flex-direction: column;
+            gap: 20px;
             margin-top: 20px;
         }
 
-        #lab-panel {
+        .hidden { display: none; }
+
+        #award-card {
             display: none;
-            margin-top: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-orange);
+            color: black;
+            padding: 40px;
+            border-radius: 30px;
+            width: 400px;
+            z-index: 9999;
         }
     </style>
 </head>
@@ -96,25 +131,25 @@
 <!-- LOGIN -->
 <div id="auth-overlay">
     <div class="auth-box">
-        <h2>Login</h2>
+        <h2>Login / Register</h2>
         <input id="auth-user" placeholder="Username">
         <input id="auth-pass" type="password" placeholder="Password">
-        <button onclick="handleAuth()">GO</button>
+        <button class="auth-btn" onclick="handleAuth()">GO</button>
         <p id="auth-msg"></p>
     </div>
 </div>
 
 <!-- UI -->
 <div id="top-right-ui">
-    <button class="ui-btn" id="music-btn" onclick="toggleAudio()">📻</button>
+    <button class="ui-btn" onclick="toggleAudio()">📻</button>
     <button class="ui-btn" onclick="openLab()">🧪</button>
     <button class="ui-btn" onclick="logout()">🚪</button>
 </div>
 
-<h1 id="site-title">Tyler's Test Site</h1>
+<h1 id="site-title" onclick="labCounter()">Tyler's Test Site</h1>
 
 <div id="pfp-wrapper">
-    <img id="main-pfp" src="https://github.com/TylerGamerYT.png" onclick="toggleDVD()">
+    <img src="https://github.com/TylerGamerYT.png" class="pfp" id="main-pfp" onclick="toggleDVD()">
 </div>
 
 <h2 id="display-username">Tyler</h2>
@@ -151,6 +186,12 @@
     </div>
 </div>
 
+<!-- AWARD -->
+<div id="award-card">
+    <h1 id="award-main-text"></h1>
+    <p id="award-sub-text"></p>
+</div>
+
 <!-- LAB -->
 <div id="lab-panel"></div>
 
@@ -158,7 +199,6 @@
 <div id="sprite-sus">📮</div>
 <div id="sprite-bus">🚌💨</div>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
