@@ -43,6 +43,7 @@
             cursor: pointer;
             user-select: none;
             transition: 0.3s;
+            -webkit-user-select: none; /* Prevents text selection on long press */
         }
         #site-title:hover { transform: scale(1.05); color: var(--accent); }
 
@@ -236,6 +237,7 @@
             border-radius: 35px;
             z-index: 5000;
             width: 450px;
+            max-width: 90vw;
             border: 8px solid #fff;
             box-shadow: 0 0 150px rgba(0,0,0,1);
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -271,6 +273,20 @@
         }
         #lab-panel button:hover { opacity: 0.8; transform: scale(1.02); }
 
+        /* --- MOBILE SECRET OVERLAY --- */
+        #mobile-secret-input {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+        }
+
         /* --- SPRITES --- */
         #sprite-sus { position: fixed; bottom: 30px; left: -180px; font-size: 75px; transition: 3s linear; pointer-events: none; z-index: 10000; }
         #sprite-bus { position: fixed; top: 20%; left: -250px; font-size: 70px; transition: 5s linear; pointer-events: none; z-index: 10000; }
@@ -283,7 +299,7 @@
         <button class="ui-btn" onclick="openLab()">🧪</button>
     </div>
 
-    <div id="site-title" onclick="labCounter()">Tyler's Test Site</div>
+    <div id="site-title" onclick="labCounter()" oncontextmenu="return false;" ontouchstart="startTouchSecret()" ontouchend="endTouchSecret()">Tyler's Test Site</div>
     
     <div id="pfp-wrapper">
         <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp" id="main-pfp" onclick="toggleDVD()">
@@ -302,6 +318,12 @@
             I made this just for fun and to test how to make one and stuff, etc. 
             You could say "lol," anyways, bye I guess.
         </p>
+    </div>
+
+    <div id="mobile-secret-input">
+        <p style="margin-top:0">Enter Secret Code:</p>
+        <input type="text" id="mob-input" placeholder="..." style="font-size: 1.2rem; width: 150px;">
+        <button onclick="checkMobileSecret()" style="margin-top:10px; width:100%; padding:5px;">ENTER</button>
     </div>
 
     <div id="bomb-container">
@@ -363,6 +385,7 @@
         let isDVD = false, posDX=Math.random()*100, posDY=Math.random()*100, velX=5, velY=5, labHits=0, comboKeys="";
         let isPlaying = false, timeRemaining = 60, cutCount = 0, balanceVal = 0;
         let audioOn = false;
+        let touchTimer;
 
         // MUSIC LOGIC
         const soundtrack = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
@@ -377,6 +400,30 @@
                 soundtrack.pause();
                 document.getElementById('music-btn').innerText = "📻";
             }
+        }
+
+        // MOBILE SECRET LOGIC
+        function startTouchSecret() {
+            touchTimer = setTimeout(() => {
+                document.getElementById('mobile-secret-input').style.display = 'block';
+                document.getElementById('mob-input').focus();
+            }, 1500); // Long press for 1.5 seconds
+        }
+        function endTouchSecret() { clearTimeout(touchTimer); }
+
+        function checkMobileSecret() {
+            let val = document.getElementById('mob-input').value.toLowerCase();
+            processSecret(val);
+            document.getElementById('mobile-secret-input').style.display = 'none';
+            document.getElementById('mob-input').value = "";
+        }
+
+        function processSecret(cmd) {
+            if(cmd === "sus") triggerSprite('sprite-sus', 3500);
+            if(cmd === "fortnite") triggerSprite('sprite-bus', 5500);
+            if(cmd === "creeper") { document.body.style.background="#2ecc71"; alert("Ssssss.... BOOM!"); }
+            if(cmd === "roblox") alert("OOF!");
+            if(cmd === "godmode") { timeRemaining=99; triggerWin(); }
         }
 
         // STATS
@@ -417,15 +464,18 @@
             requestAnimationFrame(moveDVD);
         }
 
-        // SECRETS
+        // SECRETS (PC)
         window.addEventListener('keydown', (e) => {
             if(document.activeElement.tagName === 'INPUT') return;
             comboKeys += e.key.toLowerCase();
-            if(comboKeys.endsWith("sus")) { triggerSprite('sprite-sus', 3500); comboKeys=""; }
-            if(comboKeys.endsWith("fortnite")) { triggerSprite('sprite-bus', 5500); comboKeys=""; }
-            if(comboKeys.endsWith("creeper")) { document.body.style.background="#2ecc71"; alert("Ssssss.... BOOM!"); comboKeys=""; }
-            if(comboKeys.endsWith("roblox")) { alert("OOF!"); comboKeys=""; }
-            if(comboKeys.endsWith("godmode")) { timeRemaining=99; triggerWin(); comboKeys=""; }
+            
+            // Re-using processSecret logic for keys
+            if(comboKeys.endsWith("sus")) { processSecret("sus"); comboKeys=""; }
+            if(comboKeys.endsWith("fortnite")) { processSecret("fortnite"); comboKeys=""; }
+            if(comboKeys.endsWith("creeper")) { processSecret("creeper"); comboKeys=""; }
+            if(comboKeys.endsWith("roblox")) { processSecret("roblox"); comboKeys=""; }
+            if(comboKeys.endsWith("godmode")) { processSecret("godmode"); comboKeys=""; }
+            
             if(comboKeys.length > 30) comboKeys = comboKeys.slice(-15);
         });
 
@@ -474,6 +524,7 @@
 
         function generateWires() {
             const grid = document.getElementById('wire-grid');
+            grid.innerHTML = ""; // Clear for mobile re-renders
             const colors = ['#e74c3c','#3498db','#f1c40f','#2ecc71','#9b59b6','#e67e22'];
             colors.forEach(c => {
                 let w = document.createElement('div'); w.className = 'wire-strand'; w.style.background = c;
@@ -493,7 +544,11 @@
 
         function runGyro() {
             let isMoving = false; 
+            // PC: Mouse move
             window.onmousemove = () => { isMoving = true; setTimeout(()=>isMoving=false,100); };
+            // MOBILE: Touch move
+            window.ontouchmove = () => { isMoving = true; setTimeout(()=>isMoving=false,100); };
+
             let gi = setInterval(() => {
                 if(!isPlaying) { clearInterval(gi); return; }
                 if(!isMoving) balanceVal += 3; else balanceVal = 0;
@@ -510,21 +565,37 @@
             isPlaying = false;
             document.getElementById('bomb-container').style.display='none';
             const card = document.getElementById('award-card');
-            card.style.display = 'block';
+            const mainText = document.getElementById('award-main-text');
+            const subText = document.getElementById('award-sub-text');
+            const footer = document.querySelector('.award-footer');
             
-            let lastBest = parseInt(localStorage.getItem('t_best')) || 0;
-            if(timeRemaining > lastBest) localStorage.setItem('t_best', timeRemaining+"s");
+            card.style.display = 'block';
 
-            if(timeRemaining <= 10 && timeRemaining > 0) {
-                localStorage.setItem('t_close', timeRemaining+"s");
-                document.getElementById('award-main-text').innerText = "CLOSE CALL";
-                document.getElementById('award-sub-text').innerText = `DISARMED WITH ${timeRemaining}s LEFT!`;
+            if (timeRemaining === 99) {
+                card.style.background = "linear-gradient(135deg, #00fff2, #004e4a)";
+                mainText.innerText = "GODMODE";
+                subText.innerText = "CHEATER CHEATER PEANUT BUTTER EATER";
+                footer.innerText = "How'd you do that, Tyler?";
+            } 
+            else if (timeRemaining <= 10 && timeRemaining > 0) {
                 card.style.background = "linear-gradient(135deg, #e67e22, #c0392b)";
-            } else {
-                document.getElementById('award-main-text').innerText = "SURVIVOR";
-                document.getElementById('award-sub-text').innerText = "MISSION ACCOMPLISHED";
-                document.querySelector('.award-footer').innerText = "You handled that with expertise.";
+                mainText.innerText = "CLOSE CALL";
+                subText.innerText = `DISARMED WITH ${timeRemaining}s LEFT!`;
+                footer.innerText = "Cutting it a bit close there, don't you think?";
+                localStorage.setItem('t_close', timeRemaining + "s");
+            } 
+            else {
+                card.style.background = "linear-gradient(135deg, #2ecc71, #27ae60)";
+                mainText.innerText = "SURVIVOR";
+                subText.innerText = "MISSION ACCOMPLISHED";
+                footer.innerText = "You handled that with expertise.";
             }
+
+            let lastBest = parseInt(localStorage.getItem('t_best')) || 0;
+            if(timeRemaining > lastBest) {
+                localStorage.setItem('t_best', timeRemaining + "s");
+            }
+            
             refreshStats();
             setTimeout(() => location.reload(), 8000);
         }
