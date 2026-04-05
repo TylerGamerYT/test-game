@@ -474,6 +474,24 @@
                 return;
             }
 
+    // NEW: THE "TYLERGAMERYT" GAMER BAIT
+    if(u.toLowerCase() === "tylergameryt") {
+        if(p === "2222") {
+            msg.style.color = "#00fff2"; // Cyberpunk blue
+            msg.innerText = "Connecting to TylerGamerYT's Gaming Vault...";
+            
+            setTimeout(() => {
+                msg.style.color = "#e67e22"; // Orange
+                msg.innerText = "Warning: 0 V-Bucks found. 0 Wins found. This account is kind of mid.";
+                setTimeout(() => { 
+                    loginSuccess("TylerGamerYT"); 
+                }, 3000);
+            }, 2000);
+        } else {
+            msg.innerText = "Wrong pin for the Gamer Vault!";
+        }
+        return;
+
             // Normal User Logic
             let accounts = JSON.parse(localStorage.getItem('fake_db') || "{}");
             if(accounts[u]) {
