@@ -49,6 +49,7 @@
             width: 300px;
         }
 
+        /* Shake animation for the hack alert */
         @keyframes boxShake {
             0% { transform: translateX(0); }
             25% { transform: translateX(10px); }
@@ -79,7 +80,7 @@
             margin-top: 10px;
         }
 
-        /* --- THEMES --- */
+        /* --- THEMES (THE LAB) --- */
         .theme-matrix { --bg: #000; --accent: #0f0; color: #0f0 !important; font-family: 'Courier New', monospace; }
         .theme-cyber { --bg: #2d0036; --accent: #00fff2; color: #00fff2 !important; }
         .theme-gameboy { --bg: #8bac0f; --accent: #306230; color: #306230 !important; }
@@ -94,7 +95,9 @@
             cursor: pointer;
             user-select: none;
             transition: 0.3s;
+            -webkit-user-select: none;
         }
+        #site-title:hover { transform: scale(1.05); color: var(--accent); }
 
         #top-right-ui {
             position: fixed;
@@ -119,13 +122,16 @@
             align-items: center;
             justify-content: center;
             transition: 0.2s;
+            backdrop-filter: blur(5px);
         }
+        .ui-btn:hover { background: var(--accent); color: black; transform: scale(1.1); }
 
         #pfp-wrapper {
             position: relative;
             width: 160px;
             height: 160px;
             margin-bottom: 10px;
+            z-index: 100;
         }
 
         img.pfp {
@@ -134,6 +140,7 @@
             border-radius: 50%;
             border: 6px solid white;
             cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
@@ -143,6 +150,28 @@
             height: 110px !important;
             z-index: 9999;
             border-radius: 20% !important;
+            border-width: 8px !important;
+            box-shadow: 0 0 40px rgba(255,255,255,0.4);
+        }
+
+        .user-tag {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #stats-panel {
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 20px;
         }
 
         #bomb-container {
@@ -152,6 +181,20 @@
             gap: 20px;
             width: 100%;
             max-width: 400px;
+            margin-top: 10px;
+        }
+
+        #alert-banner {
+            background: rgba(0,0,0,0.8);
+            border-left: 5px solid var(--accent);
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #ff4b4b;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
 
         #bomb-case {
@@ -160,40 +203,101 @@
             border-radius: 25px;
             padding: 30px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            border-left: 20px solid #b71c1c;
+            border-bottom: 10px solid #b71c1c;
         }
 
         #digital-timer {
             background: #050505;
             color: #ff0000;
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', Courier, monospace;
             font-size: 4rem;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 25px;
+            border: 4px solid #222;
+            box-shadow: inset 0 0 20px rgba(255,0,0,0.3);
+            text-shadow: 0 0 10px rgba(255,0,0,0.7);
         }
 
-        .game-step { background: rgba(0,0,0,0.7); padding: 25px; border-radius: 15px; margin-bottom: 15px; }
+        .game-step {
+            background: rgba(0,0,0,0.7);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
         .hidden { display: none !important; }
 
-        .wire-set { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
-        .wire-strand { width: 25px; height: 60px; cursor: pointer; border-radius: 6px; }
-        .wire-strand.cut { height: 18px; opacity: 0.1; background: #000 !important; }
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            background: #111;
+            border: 2px solid #444;
+            color: #0f0;
+            padding: 12px;
+            text-align: center;
+            font-size: 1.8rem;
+            border-radius: 8px;
+            outline: none;
+            font-family: monospace;
+        }
 
-        #gyro-track { height: 20px; background: #222; width: 100%; border-radius: 20px; margin-top: 15px; }
-        #gyro-fill { height: 100%; background: #00ff00; width: 0%; transition: width 0.1s; }
+        input[type="range"] {
+            width: 100%;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        .wire-set { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+        .wire-strand { width: 25px; height: 60px; cursor: pointer; border-radius: 6px; transition: 0.1s; }
+        .wire-strand:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .wire-strand.cut { height: 18px; opacity: 0.1; background: #000 !important; cursor: default; transform: none; }
+
+        #gyro-track { height: 20px; background: #222; width: 100%; border-radius: 20px; margin-top: 15px; border: 2px solid #444; overflow: hidden; }
+        #gyro-fill { height: 100%; background: #00ff00; width: 0%; transition: width 0.1s; box-shadow: 0 0 15px #00ff00; }
+
+        #final-button {
+            background: #ffeb3b;
+            color: #000;
+            border: none;
+            padding: 22px;
+            font-weight: 900;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 12px;
+            text-transform: uppercase;
+            box-shadow: 0 6px 0 #fbc02d;
+            transition: 0.1s;
+        }
+        #final-button:active { transform: translateY(4px); box-shadow: 0 2px 0 #fbc02d; }
 
         #award-card {
             display: none;
             position: fixed;
-            top: 50%; left: 50%;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
             background: var(--card-orange);
             color: #000;
             padding: 40px;
             border-radius: 35px;
             z-index: 5000;
+            width: 450px;
+            max-width: 90vw;
             border: 8px solid #fff;
+            box-shadow: 0 0 150px rgba(0,0,0,1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
+        @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.3); opacity: 0; } }
+
+        .award-skull { font-size: 8rem; line-height: 1; margin-bottom: 10px; }
+        .award-header { font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem; margin-bottom: 5px; }
+        .award-title { font-size: 3.5rem; font-weight: 900; margin: 10px 0; line-height: 1; }
+        .award-desc { font-weight: 800; text-transform: uppercase; opacity: 0.9; margin-bottom: 20px; font-size: 1rem; }
+        .award-footer { border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px; font-style: italic; font-weight: 600; font-size: 1.3rem; }
 
         #lab-panel {
             display: none;
@@ -201,90 +305,419 @@
             padding: 25px;
             border-radius: 20px;
             position: fixed;
-            top: 80px; right: 20px;
-            border: 3px solid gold;
-            width: 200px;
+            top: 80px;
+            right: 20px;
             z-index: 5000;
+            border: 3px solid gold;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            width: 200px;
         }
 
-        #sprite-sus { position: fixed; bottom: 30px; left: -180px; font-size: 75px; transition: 3s linear; z-index: 10000; }
-        #sprite-bus { position: fixed; top: 20%; left: -250px; font-size: 70px; transition: 5s linear; z-index: 10000; }
+        #lab-panel h3 { color: gold; margin-top: 0; }
+        #lab-panel button { 
+            width: 100%; margin: 8px 0; padding: 12px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; 
+            transition: 0.2s;
+        }
+        #lab-panel button:hover { opacity: 0.8; transform: scale(1.02); }
+
+        #mobile-secret-input {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+        }
+
+        #sprite-sus { position: fixed; bottom: 30px; left: -180px; font-size: 75px; transition: 3s linear; pointer-events: none; z-index: 10000; }
+        #sprite-bus { position: fixed; top: 20%; left: -250px; font-size: 70px; transition: 5s linear; pointer-events: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
     <div id="auth-overlay">
-        <h1 style="color:var(--accent);">TYLER'S SITE</h1>
+        <h1 style="color:var(--accent); font-size:2.5rem; margin-bottom:10px;">TYLER'S SITE</h1>
         <div class="auth-box" id="login-box">
-            <h2>Login</h2>
-            <input type="text" id="auth-user" placeholder="Username">
-            <input type="password" id="auth-pass" placeholder="Password">
+            <h2 style="margin-top:0">Login / Register</h2>
+            <input type="text" id="auth-user" placeholder="Username" style="font-size:1rem; width:80%">
+            <input type="password" id="auth-pass" placeholder="Password" style="font-size:1rem; width:80%">
             <button class="auth-btn" onclick="handleAuth()">GO</button>
-            <p id="auth-msg" style="color:red;"></p>
+            <p id="auth-msg" style="color:red; font-size:0.8rem; margin-top:10px;"></p>
         </div>
     </div>
 
     <div id="top-right-ui">
         <button class="ui-btn" onclick="toggleAudio()" id="music-btn">📻</button>
         <button class="ui-btn" onclick="openLab()">🧪</button>
-        <button class="ui-btn" onclick="logout()">🚪</button>
+        <button class="ui-btn" onclick="logout()" style="font-size:1rem">🚪</button>
     </div>
 
-    <div id="site-title" onclick="labCounter()">Tyler's Test Site</div>
+    <div id="site-title" onclick="labCounter()" oncontextmenu="return false;" ontouchstart="startTouchSecret()" ontouchend="endTouchSecret()">Tyler's Test Site</div>
     
     <div id="pfp-wrapper">
-        <img src="https://github.com/TylerGamerYT.png" class="pfp" id="main-pfp" onclick="toggleDVD()">
+        <img src="https://github.com/TylerGamerYT.png" alt="PFP" class="pfp" id="main-pfp" onclick="toggleDVD()">
     </div>
     
-    <span id="display-username" style="font-size: 2rem; font-weight: 800;">Tyler</span>
+    <span class="user-tag" id="display-username">Tyler / TylerGamerYT</span>
 
-    <div id="intro-bio">
-        <p>Welcome to my test site. Use code 1234 for the keypad.</p>
+    <div id="stats-panel">
+        <span>🏆 BEST DISARM: <span id="val-best">0s</span></span>
+        <span>🔥 CLOSEST CALL: <span id="val-close">0s</span></span>
+    </div>
+
+    <div class="bio-container" id="intro-bio">
+        <p class="bio-p">
+            Hello, I am Tyler, and welcome to my test GitHub.io game thingy. 
+            I made this just for fun and to test how to make one and stuff, etc. 
+            You could say "lol," anyways, bye I guess.
+        </p>
+    </div>
+
+    <div id="mobile-secret-input">
+        <p style="margin-top:0">Enter Secret Code:</p>
+        <input type="text" id="mob-input" placeholder="..." style="font-size: 1.2rem; width: 150px;">
+        <button onclick="checkMobileSecret()" style="margin-top:10px; width:100%; padding:5px;">ENTER</button>
     </div>
 
     <div id="bomb-container">
+        <div id="alert-banner">🚨 DISARM THE BOMB, USER!</div>
         <div id="bomb-case">
             <div id="digital-timer">01:00</div>
             <div id="step-1" class="game-step">
-                <label>STEP 1: CODE 1234</label>
-                <input type="text" id="input-code" maxlength="4" style="font-size:2rem; width:100px; text-align:center;">
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 1: BYPASS KEYPAD (CODE 1234)</label>
+                <input type="text" id="input-code" maxlength="4" placeholder="----">
             </div>
             <div id="step-2" class="game-step hidden">
-                <label>STEP 2: SLIDE TO 50%</label>
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 2: FREQUENCY CALIBRATION (50%)</label>
                 <input type="range" id="slider-freq" min="0" max="100" value="0">
-                <div id="freq-readout">0%</div>
+                <div id="freq-readout" style="font-weight:900; color:var(--accent); font-size:1.5rem;">0%</div>
             </div>
             <div id="step-3" class="game-step hidden">
-                <label>STEP 3: CUT ALL WIRES</label>
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 3: SEVER CONNECTORS</label>
                 <div class="wire-set" id="wire-grid"></div>
             </div>
             <div id="step-4" class="game-step hidden">
-                <label>STEP 4: HOLD STILL!</label>
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">STEP 4: GYRO STABILIZATION (FREEZE!)</label>
                 <div id="gyro-track"><div id="gyro-fill"></div></div>
             </div>
             <div id="step-5" class="game-step hidden">
-                <button onclick="triggerWin()" style="padding:20px; width:100%;">DISARM</button>
+                <button id="final-button" onclick="triggerWin()">FINAL OVERRIDE</button>
             </div>
         </div>
     </div>
 
     <div id="award-card">
-        <h1>BOMB DISARMED</h1>
-        <p id="award-main-text">SUCCESS</p>
-        <button onclick="location.reload()">PLAY AGAIN</button>
+        <div class="award-skull">💀</div>
+        <div class="award-header">Achievement Unlocked</div>
+        <div class="award-title" id="award-main-text">CLOSE CALL</div>
+        <div class="award-desc" id="award-sub-text">DISARMED WITH 5s LEFT!</div>
+        <div class="award-footer">Cutting it a bit close there, don't you think?</div>
     </div>
 
     <div id="lab-panel">
         <h3>THE LAB</h3>
-        <button onclick="applyTheme('matrix')">MATRIX</button>
-        <button onclick="applyTheme('cyber')">CYBER</button>
-        <button onclick="applyTheme('gameboy')">GAMEBOY</button>
-        <button onclick="closeLab()">CLOSE</button>
+        <button onclick="applyTheme('matrix')" style="background:#0f0; color:#000">MATRIX</button>
+        <button onclick="applyTheme('cyber')" style="background:#00fff2; color:#000">CYBERPUNK</button>
+        <button onclick="applyTheme('gameboy')" style="background:#8bac0f; color:#000">GAMEBOY</button>
+        <button onclick="clearAllData()" style="background:#ff4b4b; color:#fff; margin-top:20px;">WIPE DATA</button>
+        <button onclick="closeLab()" style="background:#444; color:#fff;">CLOSE</button>
     </div>
 
     <div id="sprite-sus">📮</div>
     <div id="sprite-bus">🚌💨</div>
 
-    <script src="script.js"></script>
+    <script>
+        let isDVD = false, posDX=Math.random()*100, posDY=Math.random()*100, velX=5, velY=5, labHits=0, comboKeys="";
+        let isPlaying = false, timeRemaining = 60, cutCount = 0, balanceVal = 0;
+        let audioOn = false;
+        let touchTimer;
+        let currentUser = null;
+
+    // --- ACCOUNT LOGIC ---
+    function handleAuth() {
+        const u = document.getElementById('auth-user').value.trim();
+        const p = document.getElementById('auth-pass').value;
+        const msg = document.getElementById('auth-msg');
+
+        if (!u || !p) {
+            msg.innerText = "Please fill in both fields!";
+            return;
+        }
+
+        // 1. THE "SECRET" TYLER BACKDOOR
+        if (u.toLowerCase() === "tyler") {
+            if (p === "1234") {
+                document.getElementById('login-box').style.animation = "boxShake 0.2s 5";
+                msg.style.color = "#ff4b4b";
+                msg.style.fontSize = "1.1rem";
+                msg.style.fontWeight = "900";
+                msg.innerText = "OI! WHO DARES TO HACK TYLER?";
+                
+                setTimeout(() => {
+                    msg.style.color = "#f1c40f";
+                    msg.style.fontWeight = "bold";
+                    msg.innerText = "Fine, I'll let you stay on since there's nothing important on this account anyway.";
+                    setTimeout(() => { loginSuccess("Tyler"); }, 3000);
+                }, 2000);
+            } else {
+                msg.innerText = "Incorrect password for Tyler!";
+            }
+            return; 
+        }
+
+        // 2. THE "TYLERGAMERYT" GAMER BAIT
+        if (u.toLowerCase() === "tylergameryt") {
+            if (p === "2222") {
+                msg.style.color = "#00fff2"; // Cyberpunk blue
+                msg.innerText = "Connecting to TylerGamerYT's Gaming Vault...";
+                
+                setTimeout(() => {
+                    msg.style.color = "#e67e22"; // Orange
+                    msg.innerText = "Warning: 0 V-Bucks found. 0 Wins found. This account is kind of mid.";
+                    setTimeout(() => { loginSuccess("TylerGamerYT"); }, 3000);
+                }, 2000);
+            } else {
+                msg.innerText = "Wrong pin for the Gamer Vault!";
+            }
+            return;
+        }
+
+        // 3. Normal User Logic
+        let accounts = JSON.parse(localStorage.getItem('fake_db') || "{}");
+        if (accounts[u]) {
+            if (accounts[u] === p) {
+                loginSuccess(u);
+            } else {
+                msg.innerText = "Incorrect password!";
+            }
+        } else {
+            accounts[u] = p;
+            localStorage.setItem('fake_db', JSON.stringify(accounts));
+            loginSuccess(u);
+        }
+    }
+
+    function loginSuccess(username) {
+        currentUser = username;
+        sessionStorage.setItem('loggedInUser', username);
+        document.getElementById('auth-overlay').style.display = 'none';
+        document.getElementById('display-username').innerText = username;
+        if (typeof refreshStats === "function") refreshStats();
+    }
+
+    function logout() {
+        sessionStorage.removeItem('loggedInUser');
+        location.reload();
+    }
+
+    window.onload = () => {
+        let saved = sessionStorage.getItem('loggedInUser');
+        if (saved) loginSuccess(saved);
+    };
+
+    // Placeholder for refreshStats if you don't have it elsewhere
+    function refreshStats() {
+        console.log("Stats refreshed for " + currentUser);
+    }
+
+
+        // --- REST OF THE GAME CODE ---
+        const soundtrack = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
+        soundtrack.loop = true;
+
+        function toggleAudio() {
+            audioOn = !audioOn;
+            if(audioOn) {
+                soundtrack.play();
+                document.getElementById('music-btn').innerText = "🎵";
+            } else {
+                soundtrack.pause();
+                document.getElementById('music-btn').innerText = "📻";
+            }
+        }
+
+        function startTouchSecret() {
+            touchTimer = setTimeout(() => {
+                document.getElementById('mobile-secret-input').style.display = 'block';
+                document.getElementById('mob-input').focus();
+            }, 1500);
+        }
+        function endTouchSecret() { clearTimeout(touchTimer); }
+
+        function checkMobileSecret() {
+            let val = document.getElementById('mob-input').value.toLowerCase();
+            processSecret(val);
+            document.getElementById('mobile-secret-input').style.display = 'none';
+            document.getElementById('mob-input').value = "";
+        }
+
+        function processSecret(cmd) {
+            if(cmd === "sus") triggerSprite('sprite-sus', 3500);
+            if(cmd === "fortnite") triggerSprite('sprite-bus', 5500);
+            if(cmd === "creeper") { document.body.style.background="#2ecc71"; alert("Ssssss.... BOOM!"); }
+            if(cmd === "roblox") alert("OOF!");
+            if(cmd === "godmode") { timeRemaining=99; triggerWin(); }
+        }
+
+        function refreshStats() {
+            if(!currentUser) return;
+            document.getElementById('val-best').innerText = localStorage.getItem('t_best_'+currentUser) || "0s";
+            document.getElementById('val-close').innerText = localStorage.getItem('t_close_'+currentUser) || "0s";
+        }
+
+        function labCounter() { 
+            labHits++; 
+            if(labHits >= 5) openLab(); 
+        }
+        function openLab() { document.getElementById('lab-panel').style.display='block'; }
+        function closeLab() { document.getElementById('lab-panel').style.display='none'; }
+        function applyTheme(t) { document.body.className = "theme-"+t; }
+        function clearAllData() { localStorage.clear(); location.reload(); }
+
+        function toggleDVD() { 
+            isDVD = !isDVD; 
+            if(isDVD) { 
+                document.getElementById('main-pfp').classList.add('dvd-mode'); 
+                requestAnimationFrame(moveDVD); 
+            } else { 
+                location.reload(); 
+            } 
+        }
+        function moveDVD() {
+            if(!isDVD) return;
+            let el = document.getElementById('main-pfp');
+            posDX += velX; posDY += velY;
+            let maxX = window.innerWidth - 110, maxY = window.innerHeight - 110;
+            if(posDX >= maxX || posDX <= 0) { velX *= -1; el.style.borderColor = `hsl(${Math.random()*360},80%,60%)`; }
+            if(posDY >= maxY || posDY <= 0) { velY *= -1; el.style.borderColor = `hsl(${Math.random()*360},80%,60%)`; }
+            el.style.left = posDX+'px'; el.style.top = posDY+'px';
+            requestAnimationFrame(moveDVD);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if(document.activeElement.tagName === 'INPUT') return;
+            comboKeys += e.key.toLowerCase();
+            if(comboKeys.endsWith("sus")) { processSecret("sus"); comboKeys=""; }
+            if(comboKeys.endsWith("fortnite")) { processSecret("fortnite"); comboKeys=""; }
+            if(comboKeys.endsWith("creeper")) { processSecret("creeper"); comboKeys=""; }
+            if(comboKeys.endsWith("roblox")) { processSecret("roblox"); comboKeys=""; }
+            if(comboKeys.endsWith("godmode")) { processSecret("godmode"); comboKeys=""; }
+            if(comboKeys.length > 30) comboKeys = comboKeys.slice(-15);
+        });
+
+        function triggerSprite(id, dur) {
+            let s = document.getElementById(id);
+            s.style.left = "130vw";
+            setTimeout(() => { s.style.left = "-250px"; }, dur);
+        }
+
+        setTimeout(() => {
+            document.getElementById('bomb-container').style.display='flex';
+            document.getElementById('intro-bio').style.display = 'none';
+            document.body.classList.add('alert-active');
+            isPlaying = true;
+            let ticker = setInterval(() => {
+                if(!isPlaying) { clearInterval(ticker); return; }
+                timeRemaining--;
+                document.getElementById('digital-timer').innerText = `00:${timeRemaining<10?'0'+timeRemaining:timeRemaining}`;
+                if(timeRemaining <= 10) {
+                    document.getElementById('digital-timer').style.animation = "shake 0.1s infinite";
+                    if(audioOn) soundtrack.playbackRate = 1.5;
+                }
+                if(timeRemaining <= 0) { clearInterval(ticker); failGame(); }
+            }, 1000);
+        }, 12000);
+
+        document.getElementById('input-code').addEventListener('input', (e) => {
+            if(e.target.value === "1234") { 
+                document.getElementById('step-1').classList.add('hidden'); 
+                document.getElementById('step-2').classList.remove('hidden'); 
+            }
+        });
+
+        document.getElementById('slider-freq').addEventListener('input', (e) => {
+            document.getElementById('freq-readout').innerText = e.target.value + "%";
+            if(e.target.value == "50") { 
+                document.getElementById('step-2').classList.add('hidden'); 
+                document.getElementById('step-3').classList.remove('hidden'); 
+                generateWires(); 
+            }
+        });
+
+        function generateWires() {
+            const grid = document.getElementById('wire-grid');
+            grid.innerHTML = "";
+            const colors = ['#e74c3c','#3498db','#f1c40f','#2ecc71','#9b59b6','#e67e22'];
+            colors.forEach(c => {
+                let w = document.createElement('div'); w.className = 'wire-strand'; w.style.background = c;
+                w.onclick = function() {
+                    if(!this.classList.contains('cut')){
+                        this.classList.add('cut'); cutCount++;
+                        if(cutCount===6){ 
+                            document.getElementById('step-3').classList.add('hidden'); 
+                            document.getElementById('step-4').classList.remove('hidden'); 
+                            runGyro(); 
+                        }
+                    }
+                };
+                grid.appendChild(w);
+            });
+        }
+
+        function runGyro() {
+            let isMoving = false; 
+            window.onmousemove = () => { isMoving = true; setTimeout(()=>isMoving=false,100); };
+            window.ontouchmove = () => { isMoving = true; setTimeout(()=>isMoving=false,100); };
+            let gi = setInterval(() => {
+                if(!isPlaying) { clearInterval(gi); return; }
+                if(!isMoving) balanceVal += 3; else balanceVal = 0;
+                document.getElementById('gyro-fill').style.width = balanceVal + "%";
+                if(balanceVal >= 100) { 
+                    clearInterval(gi); 
+                    document.getElementById('step-4').classList.add('hidden'); 
+                    document.getElementById('step-5').classList.remove('hidden'); 
+                }
+            }, 100);
+        }
+
+        function triggerWin() {
+            isPlaying = false;
+            document.getElementById('bomb-container').style.display='none';
+            const card = document.getElementById('award-card');
+            card.style.display = 'block';
+
+            if (timeRemaining === 99) {
+                document.getElementById('award-main-text').innerText = "GODMODE";
+                document.getElementById('award-sub-text').innerText = "CHEATER CHEATER PEANUT BUTTER EATER";
+            } 
+            else if (timeRemaining <= 10 && timeRemaining > 0) {
+                document.getElementById('award-main-text').innerText = "CLOSE CALL";
+                document.getElementById('award-sub-text').innerText = `DISARMED WITH ${timeRemaining}s LEFT!`;
+                localStorage.setItem('t_close_'+currentUser, timeRemaining + "s");
+            } 
+            else {
+                document.getElementById('award-main-text').innerText = "SURVIVOR";
+                document.getElementById('award-sub-text').innerText = "MISSION ACCOMPLISHED";
+            }
+
+            let lastBest = parseInt(localStorage.getItem('t_best_'+currentUser)) || 0;
+            if(timeRemaining > lastBest) {
+                localStorage.setItem('t_best_'+currentUser, timeRemaining + "s");
+            }
+            
+            refreshStats();
+            setTimeout(() => location.reload(), 8000);
+        }
+
+        function failGame() { 
+            document.body.style.background = "white";
+            alert("💥 KABOOM! MISSION FAILED."); 
+            location.reload(); 
+        }
+    </script>
 </body>
 </html>
